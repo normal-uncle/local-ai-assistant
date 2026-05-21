@@ -1,4 +1,4 @@
-package com.just.feature.memo
+package com.just.feature.memo.memoDetail
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,18 +13,20 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.just.feature.memo.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MemoDetailScene(
+internal fun MemoDetailScreen(
     onBack: () -> Unit,
     viewModel: MemoDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    Scaffold(topBar = { TopAppBar(title = { Text("메모") }) }) { padding ->
+    Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.memo_detail_title)) }) }) { padding ->
         Column(
             Modifier
                 .padding(padding)
@@ -32,8 +34,8 @@ fun MemoDetailScene(
                 .padding(16.dp),
         ) {
             when (val s = state) {
-                MemoDetailState.Loading -> Text("불러오는 중…")
-                MemoDetailState.NotFound -> Text("메모를 찾을 수 없습니다.")
+                MemoDetailState.Loading -> Text(stringResource(R.string.memo_detail_loading))
+                MemoDetailState.NotFound -> Text(stringResource(R.string.memo_detail_not_found))
                 is MemoDetailState.Loaded -> {
                     Text(s.note.title, style = MaterialTheme.typography.titleLarge)
                     Spacer(Modifier.height(8.dp))

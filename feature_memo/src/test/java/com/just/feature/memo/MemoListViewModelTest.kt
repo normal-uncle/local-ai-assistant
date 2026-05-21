@@ -2,6 +2,8 @@ package com.just.feature.memo
 
 import com.just.assistant.repository.model.Note
 import com.just.assistant.usecase.note.di.ObserveNotesUseCase
+import com.just.feature.memo.memoList.MemoListState
+import com.just.feature.memo.memoList.MemoListViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

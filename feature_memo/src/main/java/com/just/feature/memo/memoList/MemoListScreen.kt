@@ -1,4 +1,4 @@
-package com.just.feature.memo
+package com.just.feature.memo.memoList
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -20,19 +20,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.just.feature.memo.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MemoListScene(
+internal fun MemoListScreen(
     onOpenDetail: (Long) -> Unit,
     onBack: () -> Unit,
     viewModel: MemoListViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    Scaffold(topBar = { TopAppBar(title = { Text("메모 목록") }) }) { padding ->
+    Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.memo_list_title)) }) }) { padding ->
         Box(
             Modifier
                 .padding(padding)
@@ -43,7 +45,10 @@ fun MemoListScene(
                 MemoListState.Loading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
                 is MemoListState.Loaded -> {
                     if (s.notes.isEmpty()) {
-                        Text("저장된 메모가 없습니다", Modifier.align(Alignment.Center))
+                        Text(
+                            stringResource(R.string.memo_list_empty),
+                            Modifier.align(Alignment.Center),
+                        )
                     } else {
                         LazyColumn(Modifier.fillMaxSize()) {
                             items(s.notes, key = { it.id }) { note ->

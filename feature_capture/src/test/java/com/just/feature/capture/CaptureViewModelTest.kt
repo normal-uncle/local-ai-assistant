@@ -3,6 +3,7 @@ package com.just.feature.capture
 import com.just.assistant.repository.model.Note
 import com.just.assistant.repository.model.NoteType
 import com.just.assistant.usecase.note.di.SaveNoteUseCase
+import com.just.feature.capture.capture.CaptureViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
