@@ -13,7 +13,6 @@ android {
     compileSdk { version = release(36) }
     defaultConfig {
         minSdk = 31
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
     buildFeatures { compose = true }
