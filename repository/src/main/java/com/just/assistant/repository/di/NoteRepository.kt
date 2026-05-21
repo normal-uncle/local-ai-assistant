@@ -10,5 +10,9 @@ interface NoteRepository {
 
     suspend fun save(note: Note): Long
 
+    /**
+     * Deletes the note with [id].
+     * @return true if a row was removed; false if no row matched. Throws on I/O failure.
+     */
     suspend fun delete(id: Long): Boolean
 }

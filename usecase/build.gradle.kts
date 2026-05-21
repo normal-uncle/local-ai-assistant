@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
 }
@@ -32,7 +31,6 @@ dependencies {
     implementation(project(":repository"))
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.kotlin.serialization)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

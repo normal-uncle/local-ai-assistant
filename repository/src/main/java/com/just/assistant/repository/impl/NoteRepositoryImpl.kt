@@ -16,7 +16,7 @@ class NoteRepositoryImpl
     @Inject
     constructor(
         private val dao: NoteDao,
-        private val clock: () -> Instant = { Instant.now() },
+        private val clock: () -> Instant,
     ) : NoteRepository {
         override fun observeAll(): Flow<List<Note>> = dao.observeAll().map { list -> list.map { it.toDomain() } }
 
