@@ -3,7 +3,7 @@
     <application
         android:name=".AssistantApplication"
         android:allowBackup="false"
-        android:label="Assistant"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Assistant">
         <activity

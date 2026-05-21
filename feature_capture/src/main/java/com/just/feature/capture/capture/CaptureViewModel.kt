@@ -1,4 +1,4 @@
-package com.just.feature.capture
+package com.just.feature.capture.capture
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

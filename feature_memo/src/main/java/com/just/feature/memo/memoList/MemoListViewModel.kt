@@ -1,4 +1,4 @@
-package com.just.feature.memo
+package com.just.feature.memo.memoList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

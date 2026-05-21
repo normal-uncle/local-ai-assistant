@@ -8,8 +8,5 @@ sealed interface AssistantRoute : NavKey {
     data object Capture : AssistantRoute
 
     @Serializable
-    data object MemoList : AssistantRoute
-
-    @Serializable
-    data class MemoDetail(val noteId: Long) : AssistantRoute
+    data object Memo : AssistantRoute
 }

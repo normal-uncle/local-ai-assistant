@@ -7,8 +7,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.just.assistant.ui.component.theme.AssistantTheme
 import com.just.feature.capture.CaptureScene
-import com.just.feature.memo.MemoDetailScene
-import com.just.feature.memo.MemoListScene
+import com.just.feature.memo.MemoScene
 
 @Composable
 fun AssistantApp() {
@@ -21,18 +20,12 @@ fun AssistantApp() {
                     entryProvider {
                         entry<AssistantRoute.Capture> {
                             CaptureScene(
-                                onOpenMemoList = { backStack.add(AssistantRoute.MemoList) },
+                                onOpenMemo = { backStack.add(AssistantRoute.Memo) },
                             )
                         }
-                        entry<AssistantRoute.MemoList> {
-                            MemoListScene(
-                                onOpenDetail = { id -> backStack.add(AssistantRoute.MemoDetail(id)) },
-                                onBack = { backStack.removeLastOrNull() },
-                            )
-                        }
-                        entry<AssistantRoute.MemoDetail> {
-                            MemoDetailScene(
-                                onBack = { backStack.removeLastOrNull() },
+                        entry<AssistantRoute.Memo> {
+                            MemoScene(
+                                onBackToApp = { backStack.removeLastOrNull() },
                             )
                         }
                     },

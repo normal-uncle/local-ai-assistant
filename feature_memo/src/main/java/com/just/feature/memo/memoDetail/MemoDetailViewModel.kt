@@ -1,4 +1,4 @@
-package com.just.feature.memo
+package com.just.feature.memo.memoDetail
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
