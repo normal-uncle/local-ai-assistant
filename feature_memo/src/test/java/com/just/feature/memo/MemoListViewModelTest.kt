@@ -5,7 +5,7 @@ import com.just.assistant.usecase.note.di.ObserveNotesUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -52,9 +52,12 @@ class MemoListViewModelTest {
                     Note(id = 2, title = "b", body = "", createdAt = now, updatedAt = now),
                 )
             val vm = MemoListViewModel(FakeObserveNotes(notes))
+            // WhileSubscribed: keep an active subscriber so upstream collects
+            val job = backgroundScope.launch { vm.state.collect {} }
             advanceUntilIdle()
-            val s = vm.state.first()
+            val s = vm.state.value
             assertTrue(s is MemoListState.Loaded)
             assertEquals(2, (s as MemoListState.Loaded).notes.size)
+            job.cancel()
         }
 }

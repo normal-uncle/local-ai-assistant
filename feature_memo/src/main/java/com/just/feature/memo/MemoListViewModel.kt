@@ -28,7 +28,7 @@ class MemoListViewModel
                 .map<List<Note>, MemoListState> { MemoListState.Loaded(it) }
                 .stateIn(
                     scope = viewModelScope,
-                    started = SharingStarted.Eagerly,
+                    started = SharingStarted.WhileSubscribed(5_000),
                     initialValue = MemoListState.Loading,
                 )
     }
