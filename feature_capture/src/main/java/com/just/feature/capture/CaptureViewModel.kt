@@ -25,6 +25,7 @@ data class CaptureState(
     val input: String = "",
     val preview: CapturePreview? = null,
     val isSaving: Boolean = false,
+    val error: String? = null,
 )
 
 @HiltViewModel
@@ -55,22 +56,27 @@ class CaptureViewModel
             _state.update { it.copy(preview = null) }
         }
 
-        fun onConfirm() {
-            val preview = _state.value.preview ?: return
-            _state.update { it.copy(isSaving = true) }
+        fun onConfirm(edited: CapturePreview) {
+            if (_state.value.preview == null) return
+            if (_state.value.isSaving) return
+            _state.update { it.copy(preview = edited, isSaving = true) }
             viewModelScope.launch {
                 val now = Instant.now()
-                saveNote(
-                    Note(
-                        title = preview.title,
-                        body = preview.body,
-                        type = preview.type,
-                        tags = preview.tags,
-                        createdAt = now,
-                        updatedAt = now,
-                    ),
-                )
-                _state.update { CaptureState() }
+                try {
+                    saveNote(
+                        Note(
+                            title = edited.title,
+                            body = edited.body,
+                            type = edited.type,
+                            tags = edited.tags,
+                            createdAt = now,
+                            updatedAt = now,
+                        ),
+                    )
+                    _state.update { CaptureState() }
+                } catch (t: Throwable) {
+                    _state.update { it.copy(isSaving = false, error = t.message ?: "저장 실패") }
+                }
             }
         }
     }

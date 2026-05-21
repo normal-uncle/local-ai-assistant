@@ -72,7 +72,7 @@ fun CaptureScene(
                 PreviewSheet(
                     preview = state.preview!!,
                     onCancel = viewModel::onCancel,
-                    onConfirm = { viewModel.onConfirm() },
+                    onConfirm = viewModel::onConfirm,
                 )
             }
         }

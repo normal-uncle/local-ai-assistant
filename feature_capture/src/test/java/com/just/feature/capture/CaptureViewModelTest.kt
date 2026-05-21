@@ -96,7 +96,8 @@ class CaptureViewModelTest {
             val vm = CaptureViewModel(save)
             vm.onInputChanged("장보기\n우유")
             vm.onPrepare()
-            vm.onConfirm()
+            val prepared = vm.state.first().preview!!
+            vm.onConfirm(prepared)
             advanceUntilIdle()
 
             assertEquals("장보기", save.saved?.title)
@@ -119,5 +120,66 @@ class CaptureViewModelTest {
             val state = vm.state.first()
             assertEquals("test", state.input)
             assertNull(state.preview)
+        }
+
+    @Test
+    fun onConfirm_uses_edited_title_and_body_not_prepared_ones() =
+        runTest {
+            val save = FakeSaveNote()
+            val vm = CaptureViewModel(save)
+            vm.onInputChanged("원본 제목\n원본 본문")
+            vm.onPrepare()
+            val prepared = vm.state.first().preview!!
+            val edited = prepared.copy(title = "수정된 제목", body = "수정된 본문")
+            vm.onConfirm(edited)
+            advanceUntilIdle()
+
+            assertEquals("수정된 제목", save.saved?.title)
+            assertEquals("수정된 본문", save.saved?.body)
+        }
+
+    @Test
+    fun onConfirm_when_saveNote_throws_sets_error_and_clears_isSaving() =
+        runTest {
+            val throwing =
+                object : SaveNoteUseCase {
+                    override suspend fun invoke(note: Note): Long = throw RuntimeException("disk full")
+                }
+            val vm = CaptureViewModel(throwing)
+            vm.onInputChanged("제목\n본문")
+            vm.onPrepare()
+            vm.onConfirm(vm.state.first().preview!!)
+            advanceUntilIdle()
+
+            val state = vm.state.first()
+            assertEquals(false, state.isSaving)
+            assertEquals("disk full", state.error)
+        }
+
+    @Test
+    fun onConfirm_called_twice_only_saves_once() =
+        runTest {
+            val save =
+                object : SaveNoteUseCase {
+                    var callCount = 0
+                    var saved: Note? = null
+
+                    override suspend fun invoke(note: Note): Long {
+                        callCount++
+                        saved = note
+                        // 시뮬레이션: 첫 호출 진행 중 두 번째 호출이 즉시 무시되도록 보장
+                        kotlinx.coroutines.yield()
+                        return callCount.toLong()
+                    }
+                }
+            val vm = CaptureViewModel(save)
+            vm.onInputChanged("제목\n본문")
+            vm.onPrepare()
+            val prepared = vm.state.first().preview!!
+            vm.onConfirm(prepared)
+            vm.onConfirm(prepared) // 재진입 시도
+            advanceUntilIdle()
+
+            assertEquals(1, save.callCount)
         }
 }
