@@ -29,6 +29,15 @@ object RemoteModule {
     @Singleton
     fun provideJson(): Json = Json { ignoreUnknownKeys = true }
 
+    /**
+     * Retrofit requires a baseUrl, but every endpoint on this module uses `@Url` with an
+     * absolute URL (카탈로그 호스팅 위치가 환경마다 다름). The base URL is therefore unused
+     * at request time. We pick a deliberately invalid hostname so any accidental
+     * relative `@GET("foo")` call fails fast at the network layer instead of silently
+     * routing to example.com.
+     */
+    private const val UNUSED_BASE_URL = "https://placeholder.invalid/"
+
     @Provides
     @Singleton
     fun provideRetrofit(
@@ -36,7 +45,7 @@ object RemoteModule {
         json: Json,
     ): Retrofit =
         Retrofit.Builder()
-            .baseUrl("https://example.com/")
+            .baseUrl(UNUSED_BASE_URL)
             .client(client)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
