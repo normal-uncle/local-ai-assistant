@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_title">AI 모델 준비</string>
+    <string name="onboarding_subtitle">기기에서 동작할 모델을 다운로드합니다. Wi-Fi 권장.</string>
+    <string name="onboarding_start">다운로드 시작</string>
+    <string name="onboarding_progress_format">진행률: %1$d%% (%2$s)</string>
+    <string name="onboarding_done">다운로드 완료</string>
+    <string name="onboarding_continue">Capture로 이동</string>
+    <string name="onboarding_error">실패: %1$s</string>
+    <string name="onboarding_retry">다시 시도</string>
+</resources>
