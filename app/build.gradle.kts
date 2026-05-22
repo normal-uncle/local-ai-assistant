@@ -40,6 +40,10 @@ dependencies {
     implementation(project(":ui_component"))
     implementation(project(":feature_capture"))
     implementation(project(":feature_memo"))
+    implementation(project(":remote"))
+    implementation(project(":feature_onboarding"))
+    implementation(project(":usecase"))
+    implementation(project(":repository"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

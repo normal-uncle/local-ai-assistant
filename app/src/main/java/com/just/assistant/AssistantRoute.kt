@@ -5,6 +5,9 @@ import kotlinx.serialization.Serializable
 
 sealed interface AssistantRoute : NavKey {
     @Serializable
+    data object Onboarding : AssistantRoute
+
+    @Serializable
     data object Capture : AssistantRoute
 
     @Serializable
