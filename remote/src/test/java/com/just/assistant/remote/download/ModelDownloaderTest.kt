@@ -23,7 +23,7 @@ class ModelDownloaderTest {
     fun setUp() {
         server = MockWebServer().apply { start() }
         tmp = File.createTempFile("model-test", ".bin").apply { delete() }
-        downloader = ModelDownloader(OkHttpClient())
+        downloader = OkHttpModelDownloader(OkHttpClient())
     }
 
     @After

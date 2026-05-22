@@ -2,6 +2,9 @@ package com.just.assistant.remote
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.just.assistant.remote.catalog.ModelCatalogService
+import com.just.assistant.remote.download.ModelDownloader
+import com.just.assistant.remote.download.OkHttpModelDownloader
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,4 +56,12 @@ object RemoteModule {
     @Provides
     @Singleton
     fun provideModelCatalogService(retrofit: Retrofit): ModelCatalogService = retrofit.create(ModelCatalogService::class.java)
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RemoteBindings {
+    @Binds
+    @Singleton
+    abstract fun bindModelDownloader(impl: OkHttpModelDownloader): ModelDownloader
 }
