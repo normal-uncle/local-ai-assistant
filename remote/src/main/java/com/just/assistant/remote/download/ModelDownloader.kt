@@ -7,6 +7,7 @@ import okhttp3.Request
 import java.io.File
 import java.io.IOException
 import java.io.RandomAccessFile
+import java.nio.ByteBuffer
 import java.security.MessageDigest
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,19 +20,21 @@ sealed interface DownloadEvent {
     data class Failed(val message: String) : DownloadEvent
 }
 
+interface ModelDownloader {
+    fun download(
+        url: String,
+        destination: File,
+        expectedSha256: String,
+    ): Flow<DownloadEvent>
+}
+
 @Singleton
-class ModelDownloader
+class OkHttpModelDownloader
     @Inject
     constructor(
         private val client: OkHttpClient,
-    ) {
-        /**
-         * [destination]에 [url]의 콘텐츠를 다운로드한다.
-         * 이미 partial 파일이 있으면 `Range: bytes=N-`로 resume.
-         * 완료 시 SHA-256을 검증하고 [expectedSha256]과 다르면 파일을 지우고 Failed 방출.
-         * Flow는 마지막에 반드시 Completed 또는 Failed 1개로 종료.
-         */
-        fun download(
+    ) : ModelDownloader {
+        override fun download(
             url: String,
             destination: File,
             expectedSha256: String,
@@ -55,6 +58,7 @@ class ModelDownloader
                             }
                         val contentLength = body.contentLength().takeIf { it > 0 }
                         val totalBytes = contentLength?.let { it + startBytes }
+
                         RandomAccessFile(destination, "rw").use { raf ->
                             raf.channel.use { sink ->
                                 sink.position(startBytes)
@@ -64,7 +68,7 @@ class ModelDownloader
                                 while (true) {
                                     val read = source.read(buf)
                                     if (read < 0) break
-                                    sink.write(java.nio.ByteBuffer.wrap(buf, 0, read))
+                                    sink.write(ByteBuffer.wrap(buf, 0, read))
                                     written += read
                                     emit(DownloadEvent.Progress(written, totalBytes))
                                 }
