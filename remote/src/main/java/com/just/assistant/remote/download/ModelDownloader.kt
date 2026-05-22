@@ -55,23 +55,21 @@ class ModelDownloader
                             }
                         val contentLength = body.contentLength().takeIf { it > 0 }
                         val totalBytes = contentLength?.let { it + startBytes }
-                        val raf = RandomAccessFile(destination, "rw")
-                        val sink = raf.channel
-                        val source = body.byteStream()
-                        val buf = ByteArray(64 * 1024)
-                        var written = startBytes
-
-                        sink.position(startBytes)
-                        while (true) {
-                            val read = source.read(buf)
-                            if (read < 0) break
-                            sink.write(java.nio.ByteBuffer.wrap(buf, 0, read))
-                            written += read
-                            emit(DownloadEvent.Progress(written, totalBytes))
+                        RandomAccessFile(destination, "rw").use { raf ->
+                            raf.channel.use { sink ->
+                                sink.position(startBytes)
+                                val source = body.byteStream()
+                                val buf = ByteArray(64 * 1024)
+                                var written = startBytes
+                                while (true) {
+                                    val read = source.read(buf)
+                                    if (read < 0) break
+                                    sink.write(java.nio.ByteBuffer.wrap(buf, 0, read))
+                                    written += read
+                                    emit(DownloadEvent.Progress(written, totalBytes))
+                                }
+                            }
                         }
-                        sink.close()
-                        raf.close()
-                        source.close()
                     }
                 } catch (e: IOException) {
                     emit(DownloadEvent.Failed(e.message ?: "I/O error"))
