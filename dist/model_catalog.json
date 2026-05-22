@@ -1,0 +1,13 @@
+{
+  "version": "2026-05-22-dev",
+  "variants": [
+    {
+      "id": "dev-fixture",
+      "url": "https://raw.githubusercontent.com/normal-uncle/local-ai-assistant/feature/v0.1-p2-plan/dist/dev-fixture.bin",
+      "sha256": "531ea3f96552ec397c175e61bcd5de73f6a7737d37e2cc8a83f77f7da477a9fc",
+      "sizeMb": 1,
+      "minRamGb": 1,
+      "recommended": true
+    }
+  ]
+}
