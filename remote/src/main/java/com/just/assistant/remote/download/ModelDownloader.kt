@@ -1,7 +1,9 @@
 package com.just.assistant.remote.download
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
@@ -87,7 +89,7 @@ class OkHttpModelDownloader
                     return@flow
                 }
                 emit(DownloadEvent.Completed(destination.length()))
-            }
+            }.flowOn(Dispatchers.IO)
 
         private fun sha256(file: File): String {
             val md = MessageDigest.getInstance("SHA-256")

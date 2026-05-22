@@ -106,4 +106,25 @@ class ModelDownloaderTest {
             val last = events.last()
             assertTrue("expected Failed but got $last", last is DownloadEvent.Failed)
         }
+
+    @Test
+    fun download_completes_when_collected_from_non_io_dispatcher() =
+        runTest {
+            val payload = ByteArray(2_000) { 0x42 }
+            val expectedSha = sha256(payload)
+            server.enqueue(
+                okhttp3.mockwebserver.MockResponse()
+                    .setBody(okio.Buffer().write(payload))
+                    .setHeader("Content-Length", payload.size.toString()),
+            )
+
+            val events =
+                downloader.download(
+                    url = server.url("/m.bin").toString(),
+                    destination = tmp,
+                    expectedSha256 = expectedSha,
+                ).toList()
+
+            assertEquals(DownloadEvent.Completed(payload.size.toLong()), events.last())
+        }
 }
