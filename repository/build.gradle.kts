@@ -33,6 +33,8 @@ android {
 
 dependencies {
     implementation(project(":local"))
+    implementation(project(":remote"))
+    implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.hilt.android)

@@ -1,6 +1,8 @@
 package com.just.assistant.repository
 
+import com.just.assistant.repository.di.ModelRepository
 import com.just.assistant.repository.di.NoteRepository
+import com.just.assistant.repository.impl.ModelRepositoryImpl
 import com.just.assistant.repository.impl.NoteRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -16,6 +18,10 @@ abstract class RepositoryModule {
     @Singleton
     @Binds
     abstract fun bindNoteRepository(impl: NoteRepositoryImpl): NoteRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindModelRepository(impl: ModelRepositoryImpl): ModelRepository
 
     companion object {
         @Provides
