@@ -10,12 +10,11 @@ import javax.inject.Named
 @InstallIn(SingletonComponent::class)
 object AppConfigModule {
     /**
-     * 개발용 카탈로그 URL. v0.2 출시 전 BuildConfig flavor별로 분리한다.
-     * 현재 호스팅 위치: GitHub raw — normal-uncle/local-ai-assistant repo 안 dist/ 폴더.
-     * Task 9에서 dist/ 폴더를 master에 push해서 fetchable해진다.
+     * 개발용 카탈로그 URL. 현재는 P2.A 작업 brach를 가리킴.
+     * TODO(P2.A 머지 후): URL의 `feature/v0.1-p2-plan` 부분을 `master`로 변경.
      */
     @Provides
     @Named("modelCatalogUrl")
     fun provideModelCatalogUrl(): String =
-        "https://raw.githubusercontent.com/normal-uncle/local-ai-assistant/master/dist/model_catalog.json"
+        "https://raw.githubusercontent.com/normal-uncle/local-ai-assistant/feature/v0.1-p2-plan/dist/model_catalog.json"
 }
