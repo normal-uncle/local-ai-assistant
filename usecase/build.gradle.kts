@@ -24,10 +24,18 @@ android {
             )
         }
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 dependencies {
     implementation(project(":repository"))
+    implementation(project(":ai"))
+    implementation(project(":local"))
 
     implementation(libs.androidx.core.ktx)
 
@@ -36,4 +44,6 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.junit)
 }
