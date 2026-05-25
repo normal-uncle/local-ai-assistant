@@ -1,5 +1,7 @@
 package com.just.assistant.usecase
 
+import com.just.assistant.usecase.capture.di.ClassifyCaptureUseCase
+import com.just.assistant.usecase.capture.impl.ClassifyCaptureUseCaseImpl
 import com.just.assistant.usecase.model.di.EnsureModelDownloadedUseCase
 import com.just.assistant.usecase.model.di.ObserveModelDownloadProgressUseCase
 import com.just.assistant.usecase.model.di.ObserveModelStatusUseCase
@@ -39,4 +41,7 @@ abstract class UseCaseModule {
 
     @Binds
     abstract fun bindEnsureModelDownloadedUseCase(impl: EnsureModelDownloadedUseCaseImpl): EnsureModelDownloadedUseCase
+
+    @Binds
+    abstract fun bindClassifyCaptureUseCase(impl: ClassifyCaptureUseCaseImpl): ClassifyCaptureUseCase
 }
