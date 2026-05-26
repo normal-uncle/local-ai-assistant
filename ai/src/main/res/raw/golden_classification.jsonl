@@ -1,0 +1,50 @@
+{"id":"ko-event-1","input":"내일 3시 치과 예약","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"ko-event-2","input":"다음주 월요일 오후 2시 회의","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"ko-event-3","input":"5월 30일 가족 모임","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"ko-event-4","input":"이번주 토요일 등산","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"ko-event-5","input":"내일 아침 8시 회의실 예약","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"ko-event-6","input":"오늘 저녁 7시 부모님과 식사","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"ko-event-7","input":"7월 4일 박람회 부스 운영","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"ko-event-8","input":"수요일 점심 약속","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"ko-event-9","input":"이번달 25일 결제일","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"ko-event-10","input":"내일모레 오전 10시 출장","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"ko-reminder-1","input":"퇴근 전 보고서 제출","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"ko-reminder-2","input":"콜백 잊지 말기","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"ko-reminder-3","input":"세금 신고 마감","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"ko-reminder-4","input":"우유 사오기","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"ko-reminder-5","input":"렌즈 주문해야 함","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"ko-reminder-6","input":"비행기표 결제 잊지 말 것","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"ko-reminder-7","input":"택배 받으러 가기","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"ko-reminder-8","input":"전기세 자동이체 등록","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"ko-reminder-9","input":"퇴근길에 약국 들르기","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"ko-reminder-10","input":"엄마 생신 선물 사기","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"ko-memo-1","input":"오늘 알게 된 새 도서 추천 리스트","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"ko-memo-2","input":"이번주 본 영화 메모","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"ko-memo-3","input":"AI 컨퍼런스에서 들은 핵심 포인트 3가지","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"ko-memo-4","input":"새로 배운 단어: rendezvous","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"ko-memo-5","input":"카페 좋은 곳: 강남역 3번 출구 뒤","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"ko-memo-6","input":"고양이 사료 브랜드 비교 결과","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"ko-memo-7","input":"여행 후기 — 제주도 봄꽃 만개 시기","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"ko-memo-8","input":"Kotlin Flow 사용 정리","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"ko-memo-9","input":"오늘 점심 메뉴 맛있었음","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"ko-memo-10","input":"새로 산 키보드 후기","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"en-event-1","input":"dentist tomorrow at 3pm","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"en-event-2","input":"team standup Monday 9am","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"en-event-3","input":"flight to Tokyo on June 5","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"en-event-4","input":"dinner with parents tonight 7pm","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"en-event-5","input":"conference next Friday at 2pm","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"en-reminder-1","input":"buy milk on the way home","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"en-reminder-2","input":"call back John","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"en-reminder-3","input":"submit tax return","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"en-reminder-4","input":"pick up the dry cleaning","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"en-reminder-5","input":"register for the course","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"en-memo-1","input":"book recommendations from today","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"en-memo-2","input":"meeting notes: feature priorities","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"en-memo-3","input":"nice cafe near the office","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"en-memo-4","input":"interesting article on RAG","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"en-memo-5","input":"keyboard review: split ergonomic","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"mixed-1","input":"내일 회의 — 자료 준비 필요","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"mixed-2","input":"잊지 말기: tomorrow at 9 client call","expectedType":"EVENT","expectedHasDatetime":true}
+{"id":"mixed-3","input":"새 책 정리: Designing Data-Intensive Apps","expectedType":"MEMO","expectedHasDatetime":false}
+{"id":"mixed-4","input":"deadline this Friday — 보고서 제출","expectedType":"REMINDER","expectedHasDatetime":false}
+{"id":"mixed-5","input":"shopping: 우유, eggs, 빵","expectedType":"REMINDER","expectedHasDatetime":false}
