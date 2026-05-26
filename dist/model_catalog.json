@@ -1,12 +1,12 @@
 {
-  "version": "2026-05-22-dev",
+  "version": "2026-05-22-p2b",
   "variants": [
     {
-      "id": "dev-fixture",
-      "url": "https://raw.githubusercontent.com/normal-uncle/local-ai-assistant/feature/v0.1-p2-plan/dist/dev-fixture.bin",
-      "sha256": "531ea3f96552ec397c175e61bcd5de73f6a7737d37e2cc8a83f77f7da477a9fc",
-      "sizeMb": 1,
-      "minRamGb": 1,
+      "id": "Qwen2.5-0.5B-Instruct_multi-prefill-seq_q8_ekv1280",
+      "url": "https://huggingface.co/litert-community/Qwen2.5-0.5B-Instruct/resolve/main/Qwen2.5-0.5B-Instruct_multi-prefill-seq_q8_ekv1280.task",
+      "sha256": "e608953f169aeb1bd7b9155fec2559825e08453fc209b84eda3a781ed0452fd2",
+      "sizeMb": 522,
+      "minRamGb": 4,
       "recommended": true
     }
   ]
