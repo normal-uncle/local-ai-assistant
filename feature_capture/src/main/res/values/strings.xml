@@ -9,4 +9,7 @@
     <string name="capture_field_body">본문</string>
     <string name="capture_cancel">취소</string>
     <string name="capture_save">저장</string>
+    <string name="note_type_memo">메모</string>
+    <string name="note_type_event">일정</string>
+    <string name="note_type_reminder">리마인더</string>
 </resources>
