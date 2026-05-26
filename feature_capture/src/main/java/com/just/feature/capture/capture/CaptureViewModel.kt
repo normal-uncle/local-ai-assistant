@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.just.assistant.repository.model.Note
 import com.just.assistant.repository.model.NoteType
+import com.just.assistant.usecase.capture.di.ClassifyCaptureUseCase
 import com.just.assistant.usecase.note.di.SaveNoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +25,7 @@ data class CapturePreview(
 data class CaptureState(
     val input: String = "",
     val preview: CapturePreview? = null,
+    val isPreparing: Boolean = false,
     val isSaving: Boolean = false,
     val error: String? = null,
 )
@@ -33,6 +35,7 @@ class CaptureViewModel
     @Inject
     constructor(
         private val saveNote: SaveNoteUseCase,
+        private val classify: ClassifyCaptureUseCase,
     ) : ViewModel() {
         private val _state = MutableStateFlow(CaptureState())
         val state: StateFlow<CaptureState> get() = _state.asStateFlow()
@@ -44,11 +47,23 @@ class CaptureViewModel
         fun onPrepare() {
             val input = _state.value.input.trim()
             if (input.isEmpty()) return
-            val firstNewline = input.indexOf('\n')
-            val title = if (firstNewline < 0) input else input.substring(0, firstNewline).trim()
-            val body = if (firstNewline < 0) "" else input.substring(firstNewline + 1).trim()
-            _state.update {
-                it.copy(preview = CapturePreview(title = title, body = body, type = NoteType.MEMO))
+            if (_state.value.isPreparing) return
+
+            _state.update { it.copy(isPreparing = true) }
+            viewModelScope.launch {
+                val aiResult = classify(input)
+                val preview =
+                    if (aiResult != null) {
+                        CapturePreview(
+                            title = aiResult.title,
+                            body = aiResult.body,
+                            type = aiResult.type,
+                            tags = aiResult.tags,
+                        )
+                    } else {
+                        fallbackPreview(input)
+                    }
+                _state.update { it.copy(preview = preview, isPreparing = false) }
             }
         }
 
@@ -78,5 +93,12 @@ class CaptureViewModel
                     _state.update { it.copy(isSaving = false, error = t.message ?: "저장 실패") }
                 }
             }
+        }
+
+        private fun fallbackPreview(input: String): CapturePreview {
+            val firstNewline = input.indexOf('\n')
+            val title = if (firstNewline < 0) input else input.substring(0, firstNewline).trim()
+            val body = if (firstNewline < 0) "" else input.substring(firstNewline + 1).trim()
+            return CapturePreview(title = title, body = body, type = NoteType.MEMO)
         }
     }

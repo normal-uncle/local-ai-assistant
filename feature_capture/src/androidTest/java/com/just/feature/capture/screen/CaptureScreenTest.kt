@@ -6,7 +6,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import com.just.assistant.ai.prompt.ClassificationResult
 import com.just.assistant.repository.model.Note
+import com.just.assistant.usecase.capture.di.ClassifyCaptureUseCase
 import com.just.assistant.usecase.note.di.SaveNoteUseCase
 import com.just.feature.capture.capture.CaptureScreen
 import com.just.feature.capture.capture.CaptureViewModel
@@ -20,12 +22,16 @@ class CaptureScreenTest {
         override suspend fun invoke(note: Note): Long = 1L
     }
 
+    private class FakeClassify : ClassifyCaptureUseCase {
+        override suspend operator fun invoke(userInput: String): ClassificationResult? = null
+    }
+
     @Test
     fun input_then_prepare_shows_preview_with_title_and_body() {
         compose.setContent {
             CaptureScreen(
                 onOpenMemo = {},
-                viewModel = CaptureViewModel(FakeSaveNote()),
+                viewModel = CaptureViewModel(FakeSaveNote(), FakeClassify()),
             )
         }
 
