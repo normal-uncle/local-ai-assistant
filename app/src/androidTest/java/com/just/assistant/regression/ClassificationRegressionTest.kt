@@ -1,7 +1,8 @@
-package com.just.assistant.ai.golden
+package com.just.assistant.regression
 
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.just.assistant.ai.golden.GoldenCaseLoader
 import com.just.assistant.ai.inference.InferenceConfig
 import com.just.assistant.ai.inference.MediaPipeInferenceEngine
 import com.just.assistant.ai.prompt.ClassificationPrompt
