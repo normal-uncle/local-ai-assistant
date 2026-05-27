@@ -13,19 +13,25 @@ set -euo pipefail
 OUT_DIR="${1:-./regression-reports}"
 mkdir -p "$OUT_DIR"
 
-LOGCAT_GLOB="app/build/outputs/androidTest-results/connected/debug/*/logcat-com.just.assistant.regression.ClassificationRegressionTest-*.txt"
+SEARCH_ROOT="app/build/outputs/androidTest-results/connected/debug"
 
 # Pick the most recent logcat file matching the regression test.
-# shellcheck disable=SC2206
-matches=( $(ls -t $LOGCAT_GLOB 2>/dev/null) )
-if [ ${#matches[@]} -eq 0 ]; then
-    echo "ERROR: No regression test logcat file found." >&2
-    echo "       Expected: $LOGCAT_GLOB" >&2
+# `find -print0` + sort by mtime via stat to handle device dirs with spaces in name.
+LOGCAT_FILE=$(find "$SEARCH_ROOT" -type f \
+    -name "logcat-com.just.assistant.regression.ClassificationRegressionTest-*.txt" \
+    -print 2>/dev/null \
+    | while IFS= read -r f; do
+        printf "%s\t%s\n" "$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f")" "$f"
+      done \
+    | sort -rn \
+    | head -1 \
+    | cut -f2-)
+
+if [ -z "$LOGCAT_FILE" ]; then
+    echo "ERROR: No regression test logcat file found under $SEARCH_ROOT." >&2
     echo "       Run ':app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.just.assistant.regression.ClassificationRegressionTest' first." >&2
     exit 1
 fi
-
-LOGCAT_FILE="${matches[0]}"
 LOCAL_PATH="$OUT_DIR/report-$(date +%Y%m%d-%H%M%S).json"
 
 # Extract chunked base64 between [RegressionReportBegin] and [RegressionReportEnd].
