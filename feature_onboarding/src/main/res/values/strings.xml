@@ -8,4 +8,5 @@
     <string name="onboarding_continue">Capture로 이동</string>
     <string name="onboarding_error">실패: %1$s</string>
     <string name="onboarding_retry">다시 시도</string>
+    <string name="onboarding_variant_format">변종: %1$s</string>
 </resources>
