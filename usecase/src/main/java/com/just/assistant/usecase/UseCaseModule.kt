@@ -5,9 +5,11 @@ import com.just.assistant.usecase.capture.impl.ClassifyCaptureUseCaseImpl
 import com.just.assistant.usecase.model.di.EnsureModelDownloadedUseCase
 import com.just.assistant.usecase.model.di.ObserveModelDownloadProgressUseCase
 import com.just.assistant.usecase.model.di.ObserveModelStatusUseCase
+import com.just.assistant.usecase.model.di.ObserveSelectedVariantIdUseCase
 import com.just.assistant.usecase.model.impl.EnsureModelDownloadedUseCaseImpl
 import com.just.assistant.usecase.model.impl.ObserveModelDownloadProgressUseCaseImpl
 import com.just.assistant.usecase.model.impl.ObserveModelStatusUseCaseImpl
+import com.just.assistant.usecase.model.impl.ObserveSelectedVariantIdUseCaseImpl
 import com.just.assistant.usecase.note.di.FindNoteByIdUseCase
 import com.just.assistant.usecase.note.di.ObserveNotesUseCase
 import com.just.assistant.usecase.note.di.SaveNoteUseCase
@@ -41,6 +43,9 @@ abstract class UseCaseModule {
 
     @Binds
     abstract fun bindEnsureModelDownloadedUseCase(impl: EnsureModelDownloadedUseCaseImpl): EnsureModelDownloadedUseCase
+
+    @Binds
+    abstract fun bindObserveSelectedVariantIdUseCase(impl: ObserveSelectedVariantIdUseCaseImpl): ObserveSelectedVariantIdUseCase
 
     @Binds
     abstract fun bindClassifyCaptureUseCase(impl: ClassifyCaptureUseCaseImpl): ClassifyCaptureUseCase
