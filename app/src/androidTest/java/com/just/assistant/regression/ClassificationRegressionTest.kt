@@ -1,5 +1,6 @@
 package com.just.assistant.regression
 
+import android.util.Base64
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.just.assistant.ai.golden.GoldenCaseLoader
@@ -108,11 +109,22 @@ class ClassificationRegressionTest {
                     cases = results,
                 )
 
+            // Still write the file (best-effort — survives only if AGP doesn't uninstall).
             val outDir = File(context.filesDir, "regression").apply { mkdirs() }
             val outFile = File(outDir, "report.json")
-            outFile.writeText(Json { prettyPrint = true }.encodeToString(report))
+            val jsonText = Json { prettyPrint = false }.encodeToString(report)
+            outFile.writeText(jsonText)
 
-            println("[Regression] wrote ${outFile.absolutePath}")
+            // Dump JSON to logcat in base64-encoded ~2KB chunks bracketed by markers.
+            // Script extracts on host from the AGP-preserved logcat file.
+            val b64 = Base64.encodeToString(jsonText.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
+            val chunkSize = 2000
+            val chunks = b64.chunked(chunkSize)
+            println("[RegressionReportBegin] chunks=${chunks.size}")
+            chunks.forEachIndexed { idx, chunk ->
+                println("[RegressionReportChunk] $idx $chunk")
+            }
+            println("[RegressionReportEnd]")
             println(
                 "[Regression] variant=$variantId accuracy=${"%.3f".format(report.accuracyType)} p50=${p50}ms p95=${p95}ms",
             )
