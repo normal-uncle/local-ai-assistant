@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface ModelRepository {
     val status: Flow<ModelStatus>
     val downloadProgress: Flow<ModelDownloadProgress?>
+    val selectedVariantId: Flow<String?>
 
     /** 카탈로그 fetch → 추천 variant 선택 → 메모리 캐시에 저장 → 반환. */
     suspend fun fetchAndSelectRecommendedVariant(catalogUrl: String): ModelVariant
