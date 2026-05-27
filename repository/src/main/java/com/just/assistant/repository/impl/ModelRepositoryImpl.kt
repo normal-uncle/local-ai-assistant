@@ -1,5 +1,6 @@
 package com.just.assistant.repository.impl
 
+import com.just.assistant.local.device.DeviceProfiler
 import com.just.assistant.local.model.ModelFileStore
 import com.just.assistant.local.model.ModelStatusPrefs
 import com.just.assistant.remote.catalog.ModelCatalogService
@@ -7,6 +8,7 @@ import com.just.assistant.remote.catalog.dto.VariantDto
 import com.just.assistant.remote.download.DownloadEvent
 import com.just.assistant.remote.download.ModelDownloader
 import com.just.assistant.repository.di.ModelRepository
+import com.just.assistant.repository.model.DeviceProfile
 import com.just.assistant.repository.model.ModelDownloadProgress
 import com.just.assistant.repository.model.ModelStatus
 import com.just.assistant.repository.model.ModelVariant
@@ -25,6 +27,7 @@ class ModelRepositoryImpl
         private val downloader: ModelDownloader,
         private val fileStore: ModelFileStore,
         private val prefs: ModelStatusPrefs,
+        private val profiler: DeviceProfiler,
     ) : ModelRepository {
         private val progress = MutableStateFlow<ModelDownloadProgress?>(null)
 
@@ -43,15 +46,17 @@ class ModelRepositoryImpl
 
         override val downloadProgress: Flow<ModelDownloadProgress?> = progress.asStateFlow()
 
+        override val selectedVariantId: Flow<String?> = prefs.selectedVariantId
+
         override suspend fun fetchAndSelectRecommendedVariant(catalogUrl: String): ModelVariant {
             val catalog = service.fetch(catalogUrl)
-            val recommended =
-                catalog.variants.firstOrNull { it.recommended }
-                    ?: catalog.variants.firstOrNull()
-                    ?: error("catalog has no variants")
-            memoryCache = recommended
-            prefs.setSelectedVariant(recommended.id)
-            return recommended.toDomain()
+            require(catalog.variants.isNotEmpty()) { "catalog has no variants" }
+            val capability = profiler.probe()
+            val profile = DeviceProfile(totalRamGb = capability.totalRamGb)
+            val chosen = VariantSelector.select(catalog.variants, profile)
+            memoryCache = chosen
+            prefs.setSelectedVariant(chosen.id)
+            return chosen.toDomain()
         }
 
         override suspend fun selectedVariant(): ModelVariant? = memoryCache?.toDomain()
