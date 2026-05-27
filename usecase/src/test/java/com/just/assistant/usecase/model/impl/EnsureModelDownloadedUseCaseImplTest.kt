@@ -19,6 +19,7 @@ class EnsureModelDownloadedUseCaseImplTest {
 
         override val status: Flow<ModelStatus> = statusFlow
         override val downloadProgress: Flow<ModelDownloadProgress?> = flowOf(null)
+        override val selectedVariantId: Flow<String?> = MutableStateFlow(null)
 
         override suspend fun fetchAndSelectRecommendedVariant(catalogUrl: String): ModelVariant {
             fetchedUrl = catalogUrl
