@@ -41,6 +41,14 @@ internal fun OnboardingScreen(
             Text(stringResource(R.string.onboarding_title), style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(12.dp))
             Text(stringResource(R.string.onboarding_subtitle), style = MaterialTheme.typography.bodyMedium)
+            Spacer(Modifier.height(12.dp))
+            state.variantId?.let { vid ->
+                Text(
+                    text = stringResource(R.string.onboarding_variant_format, vid),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Spacer(Modifier.height(8.dp))
+            }
             Spacer(Modifier.height(32.dp))
 
             when (state.status) {
