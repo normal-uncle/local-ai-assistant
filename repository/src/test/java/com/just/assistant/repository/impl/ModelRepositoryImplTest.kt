@@ -2,6 +2,7 @@ package com.just.assistant.repository.impl
 
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.just.assistant.local.device.DeviceProfiler
 import com.just.assistant.local.model.ModelFileStore
 import com.just.assistant.local.model.ModelStatusPrefs
 import com.just.assistant.remote.catalog.ModelCatalogService
@@ -75,7 +76,8 @@ class ModelRepositoryImplTest {
         fileStore = ModelFileStore(ctx)
         prefs = ModelStatusPrefs(ctx)
         fileStore.delete("gemma4-e2b-q4")
-        repo = ModelRepositoryImpl(FakeService(sampleCatalog), FakeDownloader(), fileStore, prefs)
+        val profiler = DeviceProfiler(ctx)
+        repo = ModelRepositoryImpl(FakeService(sampleCatalog), FakeDownloader(), fileStore, prefs, profiler)
     }
 
     @After
