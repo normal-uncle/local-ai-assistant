@@ -61,6 +61,7 @@ class LiteRtLmInferenceEngine
                         modelPath = modelFile.absolutePath,
                         backend = Backend.CPU(),
                         maxNumTokens = config.maxTokens,
+                        cacheDir = context.cacheDir.absolutePath,
                     )
                 val newEngine = Engine(engineConfig)
                 newEngine.initialize()
