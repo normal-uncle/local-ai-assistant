@@ -11,4 +11,6 @@ data class Note(
     val datetime: Instant? = null,
     val createdAt: Instant,
     val updatedAt: Instant,
+    val calendarEventId: Long? = null,
+    val alarmRequestId: Int? = null,
 )

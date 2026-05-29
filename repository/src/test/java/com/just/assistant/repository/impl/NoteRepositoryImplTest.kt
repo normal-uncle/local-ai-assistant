@@ -107,4 +107,24 @@ class NoteRepositoryImplTest {
             assertTrue(repo.delete(id))
             assertFalse(repo.delete(id))
         }
+
+    @Test
+    fun save_then_findById_preserves_calendarEventId_and_alarmRequestId() =
+        runTest {
+            val id =
+                repo.save(
+                    Note(
+                        title = "with schedule",
+                        body = "",
+                        type = NoteType.EVENT,
+                        createdAt = fixedNow,
+                        updatedAt = fixedNow,
+                        calendarEventId = 42L,
+                        alarmRequestId = 7,
+                    ),
+                )
+            val found = repo.findById(id)
+            assertEquals(42L, found?.calendarEventId)
+            assertEquals(7, found?.alarmRequestId)
+        }
 }
