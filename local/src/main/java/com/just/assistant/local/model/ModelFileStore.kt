@@ -16,7 +16,7 @@ class ModelFileStore
         private val modelsDir: File
             get() = File(context.filesDir, "models").apply { mkdirs() }
 
-        fun fileFor(variantId: String): File = File(modelsDir, "$variantId.task")
+        fun fileFor(variantId: String): File = File(modelsDir, "$variantId.litertlm")
 
         fun exists(variantId: String): Boolean = fileFor(variantId).exists()
 

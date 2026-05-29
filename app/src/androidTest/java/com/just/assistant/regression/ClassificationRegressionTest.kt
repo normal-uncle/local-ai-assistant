@@ -5,7 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.just.assistant.ai.golden.GoldenCaseLoader
 import com.just.assistant.ai.inference.InferenceConfig
-import com.just.assistant.ai.inference.MediaPipeInferenceEngine
+import com.just.assistant.ai.inference.LiteRtLmInferenceEngine
 import com.just.assistant.ai.prompt.ClassificationPrompt
 import com.just.assistant.ai.prompt.ClassificationResult
 import com.just.assistant.repository.model.NoteType
@@ -50,14 +50,14 @@ class ClassificationRegressionTest {
             val context = ApplicationProvider.getApplicationContext<android.content.Context>()
 
             val modelsDir = File(context.filesDir, "models")
-            val modelFile = modelsDir.listFiles()?.firstOrNull { it.name.endsWith(".task") }
+            val modelFile = modelsDir.listFiles()?.firstOrNull { it.name.endsWith(".litertlm") }
             assumeTrue(
-                "No .task model found in ${modelsDir.absolutePath}. Run onboarding first.",
+                "No .litertlm model found in ${modelsDir.absolutePath}. Run onboarding first.",
                 modelFile != null,
             )
             val variantId = modelFile!!.nameWithoutExtension
 
-            val engine = MediaPipeInferenceEngine(context)
+            val engine = LiteRtLmInferenceEngine(context)
             engine.load(modelFile, InferenceConfig())
 
             val loader = GoldenCaseLoader(context)
