@@ -3,16 +3,23 @@
 이 폴더는 앱의 모델 카탈로그를 호스팅합니다.
 GitHub raw URL로 직접 접근:
 
-- `model_catalog.json` — 카탈로그 manifest (변종 2개)
+- `model_catalog.json` — 카탈로그 manifest (Gemma 4 E2B 단일 변종)
 
-## 변종 (P2.C)
+## 현재 변종
 
-| ID | 사이즈 | 최소 RAM | 권장 |
+| ID | 사이즈 | 최소 RAM | 비고 |
 |---|---|---|---|
-| Qwen2.5-0.5B-Instruct (q8) | 522MB | 4GB | 저사양 fallback |
-| Qwen2.5-1.5B-Instruct (q8) | ~1.5GB | 8GB | 고사양 권장 (분류 정확도 더 높음) |
+| gemma-4-E2B-it-web | ~1.9GB | 4GB | Spec 의도. ungated, MediaPipe `.task` 호환 |
 
-`DeviceProfiler`가 기기 RAM을 측정해 `VariantSelector`가 자동으로 최적 변종 선택.
+`DeviceProfiler`가 기기 RAM ≥ 4GB 확인하고 `VariantSelector`가 단일 권장 변종 선택.
 
-v0.2부터는 실제 Gemma 4 E2B / E4B로 교체 예정. 호스팅도 더 큰 파일에 적합한
-CDN(Cloudflare R2 또는 Hugging Face의 Gemma org auth)으로 이전.
+## 히스토리
+
+- **2026-05-28**: Gemma 4 E2B로 교체. ungated `litert-community/gemma-4-E2B-it-litert-lm`에서 호스팅.
+- 2026-05-26 (P2.C): Qwen 2.5 0.5B + 1.5B 변종. Gemma agreement 우회용 baseline.
+- 2026-05-22 (P2.B): Qwen 2.5 0.5B 단일.
+- 2026-05-21 (P2.A): 1MB dev-fixture 더미.
+
+## v0.3 계획
+
+E2B + E4B 다중 변종 — `Gemma-3n-E4B` 또는 `gemma-4-E4B-it-litert-lm`의 `.task` 파일 검증 후 추가.

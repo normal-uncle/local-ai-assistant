@@ -1,20 +1,12 @@
 {
-  "version": "2026-05-26-p2c",
+  "version": "2026-05-28-gemma4-e2b",
   "variants": [
     {
-      "id": "Qwen2.5-0.5B-Instruct_multi-prefill-seq_q8_ekv1280",
-      "url": "https://huggingface.co/litert-community/Qwen2.5-0.5B-Instruct/resolve/main/Qwen2.5-0.5B-Instruct_multi-prefill-seq_q8_ekv1280.task",
-      "sha256": "e608953f169aeb1bd7b9155fec2559825e08453fc209b84eda3a781ed0452fd2",
-      "sizeMb": 522,
+      "id": "gemma-4-E2B-it-web",
+      "url": "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it-web.task",
+      "sha256": "2cbff161177a4d51c9d04360016185976f504517ba5758cd10c1564e5421c5a5",
+      "sizeMb": 1912,
       "minRamGb": 4,
-      "recommended": true
-    },
-    {
-      "id": "Qwen2.5-1.5B-Instruct_multi-prefill-seq_q8_ekv1280",
-      "url": "https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct/resolve/main/Qwen2.5-1.5B-Instruct_multi-prefill-seq_q8_ekv1280.task",
-      "sha256": "8d867a7c93a6acf2892f08e0174e2f6f351ad256b7e3cfb6d6cd9c89794b42e0",
-      "sizeMb": 1524,
-      "minRamGb": 8,
       "recommended": true
     }
   ]
