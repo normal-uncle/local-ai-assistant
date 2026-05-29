@@ -40,7 +40,7 @@ dependencies {
     implementation(libs.kotlin.serialization)
     implementation(libs.kotlinx.coroutines.android)
 
-    implementation(libs.mediapipe.tasks.genai)
+    implementation(libs.litertlm.android)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
