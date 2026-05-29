@@ -4,8 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.just.assistant.repository.model.Note
 import com.just.assistant.repository.model.NoteType
+import com.just.assistant.repository.model.ScheduleEventInput
+import com.just.assistant.repository.model.ScheduleReminderInput
 import com.just.assistant.usecase.capture.di.ClassifyCaptureUseCase
 import com.just.assistant.usecase.note.di.SaveNoteUseCase
+import com.just.assistant.usecase.schedule.di.ScheduleEventUseCase
+import com.just.assistant.usecase.schedule.di.ScheduleReminderUseCase
+import com.just.feature.capture.CapturePreviewConfirmed
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +25,7 @@ data class CapturePreview(
     val body: String,
     val type: NoteType,
     val tags: List<String> = emptyList(),
+    val datetime: Instant? = null,
 )
 
 data class CaptureState(
@@ -36,6 +42,8 @@ class CaptureViewModel
     constructor(
         private val saveNote: SaveNoteUseCase,
         private val classify: ClassifyCaptureUseCase,
+        private val scheduleEvent: ScheduleEventUseCase,
+        private val scheduleReminder: ScheduleReminderUseCase,
     ) : ViewModel() {
         private val _state = MutableStateFlow(CaptureState())
         val state: StateFlow<CaptureState> get() = _state.asStateFlow()
@@ -71,21 +79,57 @@ class CaptureViewModel
             _state.update { it.copy(preview = null) }
         }
 
-        fun onConfirm(edited: CapturePreview) {
+        fun onConfirm(confirmed: CapturePreviewConfirmed) {
             if (_state.value.preview == null) return
             if (_state.value.isSaving) return
-            _state.update { it.copy(preview = edited, isSaving = true) }
+            _state.update { it.copy(isSaving = true) }
             viewModelScope.launch {
                 val now = Instant.now()
                 try {
+                    var calendarEventId: Long? = null
+                    var alarmRequestId: Int? = null
+
+                    if (confirmed.scheduleEnabled && confirmed.datetime != null) {
+                        when (confirmed.type) {
+                            NoteType.EVENT -> {
+                                val event =
+                                    scheduleEvent(
+                                        ScheduleEventInput(
+                                            title = confirmed.title,
+                                            body = confirmed.body,
+                                            whenAt = confirmed.datetime,
+                                        ),
+                                    )
+                                calendarEventId = event?.calendarEventId
+                            }
+                            NoteType.REMINDER -> {
+                                val requestId = (System.currentTimeMillis() and 0x7FFFFFFFL).toInt()
+                                val reminder =
+                                    scheduleReminder(
+                                        ScheduleReminderInput(
+                                            title = confirmed.title,
+                                            body = confirmed.body,
+                                            whenAt = confirmed.datetime,
+                                        ),
+                                        requestId,
+                                    )
+                                alarmRequestId = reminder.alarmRequestId
+                            }
+                            NoteType.MEMO -> Unit
+                        }
+                    }
+
                     saveNote(
                         Note(
-                            title = edited.title,
-                            body = edited.body,
-                            type = edited.type,
-                            tags = edited.tags,
+                            title = confirmed.title,
+                            body = confirmed.body,
+                            type = confirmed.type,
+                            tags = confirmed.tags,
+                            datetime = confirmed.datetime,
                             createdAt = now,
                             updatedAt = now,
+                            calendarEventId = calendarEventId,
+                            alarmRequestId = alarmRequestId,
                         ),
                     )
                     _state.update { CaptureState() }
