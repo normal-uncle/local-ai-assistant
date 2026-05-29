@@ -4,7 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,8 +23,7 @@ class AlarmScheduler
             body: String,
         ) {
             val pending = buildPendingIntent(requestId, title, body)
-            val useExact = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || am.canScheduleExactAlarms()
-            if (useExact) {
+            if (am.canScheduleExactAlarms()) {
                 am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, whenEpochMs, pending)
             } else {
                 am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, whenEpochMs, pending)
