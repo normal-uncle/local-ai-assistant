@@ -3,7 +3,6 @@ package com.just.assistant.local.calendar
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
@@ -40,7 +39,6 @@ class CalendarWriterTest {
             "Device has no visible calendar (e.g. fresh emulator without Google account)",
             eventId != null,
         )
-        assertNotNull(eventId)
         assertTrue("delete should succeed for inserted event", writer.deleteEvent(eventId!!))
     }
 }
