@@ -16,6 +16,12 @@ import com.just.assistant.usecase.note.di.SaveNoteUseCase
 import com.just.assistant.usecase.note.impl.FindNoteByIdUseCaseImpl
 import com.just.assistant.usecase.note.impl.ObserveNotesUseCaseImpl
 import com.just.assistant.usecase.note.impl.SaveNoteUseCaseImpl
+import com.just.assistant.usecase.schedule.di.CancelScheduledItemUseCase
+import com.just.assistant.usecase.schedule.di.ScheduleEventUseCase
+import com.just.assistant.usecase.schedule.di.ScheduleReminderUseCase
+import com.just.assistant.usecase.schedule.impl.CancelScheduledItemUseCaseImpl
+import com.just.assistant.usecase.schedule.impl.ScheduleEventUseCaseImpl
+import com.just.assistant.usecase.schedule.impl.ScheduleReminderUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -49,4 +55,13 @@ abstract class UseCaseModule {
 
     @Binds
     abstract fun bindClassifyCaptureUseCase(impl: ClassifyCaptureUseCaseImpl): ClassifyCaptureUseCase
+
+    @Binds
+    abstract fun bindScheduleEventUseCase(impl: ScheduleEventUseCaseImpl): ScheduleEventUseCase
+
+    @Binds
+    abstract fun bindScheduleReminderUseCase(impl: ScheduleReminderUseCaseImpl): ScheduleReminderUseCase
+
+    @Binds
+    abstract fun bindCancelScheduledItemUseCase(impl: CancelScheduledItemUseCaseImpl): CancelScheduledItemUseCase
 }
