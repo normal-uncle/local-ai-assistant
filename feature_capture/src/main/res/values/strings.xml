@@ -12,4 +12,13 @@
     <string name="note_type_memo">메모</string>
     <string name="note_type_event">일정</string>
     <string name="note_type_reminder">리마인더</string>
+    <string name="capture_schedule_to_calendar">캘린더에 추가</string>
+    <string name="capture_schedule_alarm">알람 설정</string>
+    <string name="capture_datetime_edit">시각</string>
+    <string name="capture_datetime_picker_title">날짜·시간 선택</string>
+    <string name="capture_datetime_confirm">확인</string>
+    <string name="capture_datetime_cancel">취소</string>
+    <string name="capture_datetime_to_time">→ 시간</string>
+    <string name="capture_datetime_to_date">← 날짜</string>
+    <string name="capture_schedule_failed">등록 실패 (권한·캘린더 확인)</string>
 </resources>
