@@ -49,6 +49,8 @@ class NoteRepositoryImpl
                 datetime = datetimeIso?.let(Instant::parse),
                 createdAt = Instant.ofEpochMilli(createdAtEpochMs),
                 updatedAt = Instant.ofEpochMilli(updatedAtEpochMs),
+                calendarEventId = calendarEventId,
+                alarmRequestId = alarmRequestId,
             )
 
         private fun Note.toEntity(): NoteEntity =
@@ -61,5 +63,7 @@ class NoteRepositoryImpl
                 datetimeIso = datetime?.toString(),
                 createdAtEpochMs = createdAt.toEpochMilli(),
                 updatedAtEpochMs = updatedAt.toEpochMilli(),
+                calendarEventId = calendarEventId,
+                alarmRequestId = alarmRequestId,
             )
     }

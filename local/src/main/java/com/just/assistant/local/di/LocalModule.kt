@@ -19,7 +19,11 @@ object LocalModule {
     @Singleton
     fun provideDatabase(
         @ApplicationContext ctx: Context,
-    ): AssistantDatabase = Room.databaseBuilder(ctx, AssistantDatabase::class.java, "assistant.db").build()
+    ): AssistantDatabase =
+        Room
+            .databaseBuilder(ctx, AssistantDatabase::class.java, "assistant.db")
+            .addMigrations(AssistantDatabase.MIGRATION_1_2)
+            .build()
 
     @Provides
     fun provideNoteDao(db: AssistantDatabase): NoteDao = db.noteDao()

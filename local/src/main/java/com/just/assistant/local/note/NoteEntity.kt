@@ -13,4 +13,6 @@ data class NoteEntity(
     val datetimeIso: String? = null,
     val createdAtEpochMs: Long,
     val updatedAtEpochMs: Long,
+    val calendarEventId: Long? = null,
+    val alarmRequestId: Int? = null,
 )
