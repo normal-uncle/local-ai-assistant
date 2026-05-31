@@ -67,6 +67,7 @@ class CaptureViewModel
                             body = aiResult.body,
                             type = aiResult.type,
                             tags = aiResult.tags,
+                            datetime = aiResult.datetimeIso?.let { runCatching { Instant.parse(it) }.getOrNull() },
                         )
                     } else {
                         fallbackPreview(input)
@@ -133,8 +134,8 @@ class CaptureViewModel
                         ),
                     )
                     _state.update { CaptureState() }
-                } catch (t: Throwable) {
-                    _state.update { it.copy(isSaving = false, error = t.message ?: "저장 실패") }
+                } catch (e: Exception) {
+                    _state.update { it.copy(isSaving = false, error = e.message ?: "저장 실패") }
                 }
             }
         }
