@@ -44,6 +44,7 @@ dependencies {
     implementation(project(":feature_onboarding"))
     implementation(project(":usecase"))
     implementation(project(":repository"))
+    implementation(project(":local"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
