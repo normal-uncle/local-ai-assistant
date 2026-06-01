@@ -10,6 +10,7 @@ interface ScheduledItemRepository {
     suspend fun scheduleReminder(
         input: ScheduleReminderInput,
         requestId: Int,
+        noteId: Long,
     ): ScheduledItem.Reminder
 
     suspend fun cancelEvent(calendarEventId: Long): Boolean

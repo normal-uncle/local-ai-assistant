@@ -112,7 +112,8 @@ class CaptureViewModel
                                             body = confirmed.body,
                                             whenAt = confirmed.datetime,
                                         ),
-                                        requestId,
+                                        requestId = requestId,
+                                        noteId = 0L,
                                     )
                                 alarmRequestId = reminder.alarmRequestId
                             }

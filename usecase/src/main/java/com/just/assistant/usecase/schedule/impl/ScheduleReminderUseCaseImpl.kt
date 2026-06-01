@@ -14,5 +14,6 @@ class ScheduleReminderUseCaseImpl
         override suspend fun invoke(
             input: ScheduleReminderInput,
             requestId: Int,
-        ): ScheduledItem.Reminder = repository.scheduleReminder(input, requestId)
+            noteId: Long,
+        ): ScheduledItem.Reminder = repository.scheduleReminder(input, requestId, noteId)
     }

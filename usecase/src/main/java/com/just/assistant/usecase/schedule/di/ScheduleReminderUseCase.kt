@@ -7,5 +7,6 @@ interface ScheduleReminderUseCase {
     suspend operator fun invoke(
         input: ScheduleReminderInput,
         requestId: Int,
+        noteId: Long,
     ): ScheduledItem.Reminder
 }
