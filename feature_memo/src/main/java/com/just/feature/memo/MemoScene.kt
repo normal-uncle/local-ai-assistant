@@ -20,8 +20,9 @@ fun MemoScene(onBackToApp: () -> Unit) {
                         onBack = onBackToApp,
                     )
                 }
-                entry<MemoSubRoute.Detail> {
+                entry<MemoSubRoute.Detail> { route ->
                     MemoDetailScreen(
+                        noteId = route.noteId,
                         onBack = { backStack.removeLastOrNull() },
                     )
                 }

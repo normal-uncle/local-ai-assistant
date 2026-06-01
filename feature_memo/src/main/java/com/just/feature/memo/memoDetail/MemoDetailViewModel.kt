@@ -1,16 +1,17 @@
 package com.just.feature.memo.memoDetail
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.just.assistant.repository.model.Note
 import com.just.assistant.usecase.note.di.FindNoteByIdUseCase
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 sealed interface MemoDetailState {
     data object Loading : MemoDetailState
@@ -20,14 +21,13 @@ sealed interface MemoDetailState {
     data object NotFound : MemoDetailState
 }
 
-@HiltViewModel
+@HiltViewModel(assistedFactory = MemoDetailViewModel.Factory::class)
 class MemoDetailViewModel
-    @Inject
+    @AssistedInject
     constructor(
-        savedState: SavedStateHandle,
+        @Assisted private val noteId: Long,
         private val findById: FindNoteByIdUseCase,
     ) : ViewModel() {
-        private val noteId: Long = checkNotNull(savedState["noteId"])
         private val _state = MutableStateFlow<MemoDetailState>(MemoDetailState.Loading)
         val state: StateFlow<MemoDetailState> = _state.asStateFlow()
 
@@ -40,5 +40,10 @@ class MemoDetailViewModel
                 val note = findById(noteId)
                 _state.value = if (note == null) MemoDetailState.NotFound else MemoDetailState.Loaded(note)
             }
+        }
+
+        @AssistedFactory
+        interface Factory {
+            fun create(noteId: Long): MemoDetailViewModel
         }
     }

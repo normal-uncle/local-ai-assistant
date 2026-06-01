@@ -22,8 +22,12 @@ import com.just.feature.memo.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MemoDetailScreen(
+    noteId: Long,
     onBack: () -> Unit,
-    viewModel: MemoDetailViewModel = hiltViewModel(),
+    viewModel: MemoDetailViewModel =
+        hiltViewModel<MemoDetailViewModel, MemoDetailViewModel.Factory>(
+            key = "memo-detail-$noteId",
+        ) { factory -> factory.create(noteId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.memo_detail_title)) }) }) { padding ->
