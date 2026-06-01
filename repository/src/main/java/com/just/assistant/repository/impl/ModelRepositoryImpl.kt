@@ -63,8 +63,15 @@ class ModelRepositoryImpl
 
         override suspend fun downloadSelected() {
             val variant = memoryCache ?: error("no selected variant; call fetchAndSelectRecommendedVariant first")
-            prefs.setStatus("DOWNLOADING")
             val file = fileStore.fileFor(variant.id)
+            if (file.exists() &&
+                fileStore.sha256(variant.id)?.equals(variant.sha256, ignoreCase = true) == true
+            ) {
+                progress.value = ModelDownloadProgress(variant.id, file.length(), file.length())
+                prefs.setStatus("READY")
+                return
+            }
+            prefs.setStatus("DOWNLOADING")
             downloader.download(variant.url, file, variant.sha256).collect { event ->
                 when (event) {
                     is DownloadEvent.Progress -> {
