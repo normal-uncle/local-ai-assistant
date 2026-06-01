@@ -88,6 +88,7 @@ class ScheduledItemRepositoryImplTest {
                             whenAt = whenAt,
                         ),
                     requestId = 7,
+                    noteId = 42L,
                 )
 
             assertEquals(7, result.alarmRequestId)
@@ -98,6 +99,7 @@ class ScheduledItemRepositoryImplTest {
                     whenEpochMs = whenAt.toEpochMilli(),
                     title = "콜백",
                     body = "고객 A",
+                    noteId = 42L,
                 )
             }
         }

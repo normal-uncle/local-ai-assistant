@@ -40,12 +40,14 @@ class ScheduledItemRepositoryImpl
         override suspend fun scheduleReminder(
             input: ScheduleReminderInput,
             requestId: Int,
+            noteId: Long,
         ): ScheduledItem.Reminder {
             alarmScheduler.schedule(
                 requestId = requestId,
                 whenEpochMs = input.whenAt.toEpochMilli(),
                 title = input.title,
                 body = input.body,
+                noteId = noteId,
             )
             return ScheduledItem.Reminder(
                 alarmRequestId = requestId,

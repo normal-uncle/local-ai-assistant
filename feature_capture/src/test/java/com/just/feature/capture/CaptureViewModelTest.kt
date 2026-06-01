@@ -59,13 +59,16 @@ class CaptureViewModelTest {
     private class FakeScheduleReminder : ScheduleReminderUseCase {
         var lastInput: ScheduleReminderInput? = null
         var lastRequestId: Int? = null
+        var lastNoteId: Long? = null
 
         override suspend operator fun invoke(
             input: ScheduleReminderInput,
             requestId: Int,
+            noteId: Long,
         ): ScheduledItem.Reminder {
             lastInput = input
             lastRequestId = requestId
+            lastNoteId = noteId
             return ScheduledItem.Reminder(
                 alarmRequestId = requestId,
                 title = input.title,
