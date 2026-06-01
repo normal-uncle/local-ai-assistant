@@ -22,6 +22,7 @@ class AlarmReceiver : BroadcastReceiver() {
         const val EXTRA_TITLE = "extra.title"
         const val EXTRA_BODY = "extra.body"
         const val EXTRA_REQUEST_ID = "extra.requestId"
+        const val EXTRA_NOTE_ID = "extra.noteId"
         private const val TAG = "AlarmReceiver"
     }
 }

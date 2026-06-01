@@ -21,8 +21,9 @@ class AlarmScheduler
             whenEpochMs: Long,
             title: String,
             body: String,
+            noteId: Long,
         ) {
-            val pending = buildPendingIntent(requestId, title, body)
+            val pending = buildPendingIntent(requestId, title, body, noteId)
             if (am.canScheduleExactAlarms()) {
                 am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, whenEpochMs, pending)
             } else {
@@ -31,7 +32,7 @@ class AlarmScheduler
         }
 
         fun cancel(requestId: Int) {
-            val pending = buildPendingIntent(requestId, "", "")
+            val pending = buildPendingIntent(requestId, "", "", -1L)
             am.cancel(pending)
             pending.cancel()
         }
@@ -40,6 +41,7 @@ class AlarmScheduler
             requestId: Int,
             title: String,
             body: String,
+            noteId: Long,
         ): PendingIntent {
             val intent =
                 Intent(context, AlarmReceiver::class.java).apply {
@@ -47,6 +49,7 @@ class AlarmScheduler
                     putExtra(AlarmReceiver.EXTRA_REQUEST_ID, requestId)
                     putExtra(AlarmReceiver.EXTRA_TITLE, title)
                     putExtra(AlarmReceiver.EXTRA_BODY, body)
+                    putExtra(AlarmReceiver.EXTRA_NOTE_ID, noteId)
                 }
             val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             return PendingIntent.getBroadcast(context, requestId, intent, flags)
