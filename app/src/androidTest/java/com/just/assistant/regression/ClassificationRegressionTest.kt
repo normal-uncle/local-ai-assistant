@@ -59,7 +59,7 @@ class ClassificationRegressionTest {
             val variantId = modelFile!!.nameWithoutExtension
 
             val engine = LiteRtLmInferenceEngine(context)
-            engine.load(modelFile, InferenceConfig())
+            engine.load(modelFile, InferenceConfig(preferGpu = false))
 
             val loader = GoldenCaseLoader(context)
             val cases = loader.load()

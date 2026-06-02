@@ -72,15 +72,21 @@ class LiteRtLmInferenceEngine
                     )
 
                 val (newEngine, backend) =
-                    try {
-                        val gpu = Engine(baseConfig.copy(backend = Backend.GPU()))
-                        gpu.initialize()
-                        gpu to "GPU"
-                    } catch (e: Throwable) {
-                        Log.w(TAG, "GPU init failed, falling back to CPU", e)
+                    if (!config.preferGpu) {
                         val cpu = Engine(baseConfig.copy(backend = Backend.CPU()))
                         cpu.initialize()
-                        cpu to "CPU(fallback)"
+                        cpu to "CPU"
+                    } else {
+                        try {
+                            val gpu = Engine(baseConfig.copy(backend = Backend.GPU()))
+                            gpu.initialize()
+                            gpu to "GPU"
+                        } catch (e: Throwable) {
+                            Log.w(TAG, "GPU init failed, falling back to CPU", e)
+                            val cpu = Engine(baseConfig.copy(backend = Backend.CPU()))
+                            cpu.initialize()
+                            cpu to "CPU(fallback)"
+                        }
                     }
 
                 engine = newEngine
