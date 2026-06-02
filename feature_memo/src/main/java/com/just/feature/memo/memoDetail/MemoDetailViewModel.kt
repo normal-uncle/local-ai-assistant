@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.just.assistant.repository.model.Note
 import com.just.assistant.usecase.note.di.FindNoteByIdUseCase
+import com.just.assistant.usecase.schedule.di.UnscheduleNoteUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -27,6 +28,7 @@ class MemoDetailViewModel
     constructor(
         @Assisted private val noteId: Long,
         private val findById: FindNoteByIdUseCase,
+        private val unschedule: UnscheduleNoteUseCase,
     ) : ViewModel() {
         private val _state = MutableStateFlow<MemoDetailState>(MemoDetailState.Loading)
         val state: StateFlow<MemoDetailState> = _state.asStateFlow()
@@ -35,10 +37,18 @@ class MemoDetailViewModel
             load()
         }
 
+        fun onUnschedule() {
+            viewModelScope.launch {
+                unschedule(noteId)
+                load()
+            }
+        }
+
         private fun load() {
             viewModelScope.launch {
                 val note = findById(noteId)
-                _state.value = if (note == null) MemoDetailState.NotFound else MemoDetailState.Loaded(note)
+                _state.value =
+                    if (note == null) MemoDetailState.NotFound else MemoDetailState.Loaded(note)
             }
         }
 
