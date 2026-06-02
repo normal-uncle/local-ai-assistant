@@ -23,4 +23,10 @@ interface InferenceEngine {
      * 호출 전 [load] 필요. 미로드 상태에서 호출 시 IllegalStateException.
      */
     suspend fun generate(prompt: String): String
+
+    /**
+     * 마지막 [load] 호출에서 실제 사용된 backend 식별자. 로드 전이면 null.
+     * 회귀 리포트 등 진단 용도.
+     */
+    val lastBackend: String? get() = null
 }
