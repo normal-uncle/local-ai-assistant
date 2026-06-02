@@ -1,5 +1,6 @@
 package com.just.feature.capture.capture
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,7 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -115,9 +118,22 @@ internal fun CaptureScreen(
                 Spacer(Modifier.height(12.dp))
                 Button(
                     onClick = viewModel::onPrepare,
-                    enabled = state.input.isNotBlank() && !state.isSaving,
+                    enabled = state.input.isNotBlank() && !state.isSaving && !state.isPreparing,
                     modifier = Modifier.testTag("capture_prepare"),
                 ) { Text(stringResource(R.string.capture_prepare)) }
+                if (state.isPreparing) {
+                    Spacer(Modifier.height(12.dp))
+                    androidx.compose.foundation.layout.Row(
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.padding(end = 4.dp))
+                        Text(
+                            text = stringResource(R.string.capture_preparing),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
             }
         }
 
