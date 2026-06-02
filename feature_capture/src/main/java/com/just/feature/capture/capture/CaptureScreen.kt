@@ -159,8 +159,18 @@ internal fun CaptureScreen(
                             }
                         }
                     },
-                    onCancel = viewModel::onCancel,
-                    onConfirm = viewModel::onConfirm,
+                    onCancel = {
+                        scheduleToggleOn = false
+                        pendingToggleType = null
+                        dialog = null
+                        viewModel.onCancel()
+                    },
+                    onConfirm = { confirmed ->
+                        scheduleToggleOn = false
+                        pendingToggleType = null
+                        dialog = null
+                        viewModel.onConfirm(confirmed)
+                    },
                 )
             }
         }
