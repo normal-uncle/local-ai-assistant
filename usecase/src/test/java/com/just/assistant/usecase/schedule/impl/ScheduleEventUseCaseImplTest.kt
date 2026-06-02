@@ -23,6 +23,7 @@ class ScheduleEventUseCaseImplTest {
         override suspend fun scheduleReminder(
             input: ScheduleReminderInput,
             requestId: Int,
+            noteId: Long,
         ): ScheduledItem.Reminder = error("not used")
 
         override suspend fun cancelEvent(calendarEventId: Long): Boolean = false
