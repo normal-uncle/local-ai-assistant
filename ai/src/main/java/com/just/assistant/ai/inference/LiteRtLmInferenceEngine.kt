@@ -1,6 +1,7 @@
 package com.just.assistant.ai.inference
 
 import android.content.Context
+import android.util.Log
 import com.google.ai.edge.litertlm.Backend
 import com.google.ai.edge.litertlm.Content
 import com.google.ai.edge.litertlm.ConversationConfig
@@ -60,20 +61,32 @@ class LiteRtLmInferenceEngine
                 }
                 engine?.close()
                 engine = null
+                _lastBackend = null
 
-                val engineConfig =
+                val baseConfig =
                     EngineConfig(
                         modelPath = modelFile.absolutePath,
                         backend = Backend.CPU(),
                         maxNumTokens = config.maxTokens,
                         cacheDir = context.cacheDir.absolutePath,
                     )
-                val newEngine = Engine(engineConfig)
-                newEngine.initialize()
+
+                val (newEngine, backend) =
+                    try {
+                        val gpu = Engine(baseConfig.copy(backend = Backend.GPU()))
+                        gpu.initialize()
+                        gpu to "GPU"
+                    } catch (e: Throwable) {
+                        Log.w(TAG, "GPU init failed, falling back to CPU", e)
+                        val cpu = Engine(baseConfig.copy(backend = Backend.CPU()))
+                        cpu.initialize()
+                        cpu to "CPU(fallback)"
+                    }
 
                 engine = newEngine
                 currentConfig = config
                 currentModelPath = modelFile.absolutePath
+                _lastBackend = backend
             }
         }
 
@@ -114,4 +127,8 @@ class LiteRtLmInferenceEngine
                         .joinToString(separator = "") { it.text }
                 }
             }
+
+        companion object {
+            private const val TAG = "LiteRtLmInferenceEngine"
+        }
     }
