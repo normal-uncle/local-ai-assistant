@@ -42,6 +42,11 @@ class LiteRtLmInferenceEngine
         @Volatile
         private var currentModelPath: String? = null
 
+        @Volatile
+        private var _lastBackend: String? = null
+
+        override val lastBackend: String? get() = _lastBackend
+
         override suspend fun load(
             modelFile: File,
             config: InferenceConfig,
@@ -77,6 +82,7 @@ class LiteRtLmInferenceEngine
             engine = null
             currentConfig = null
             currentModelPath = null
+            _lastBackend = null
         }
 
         override fun isReady(): Boolean = engine != null
