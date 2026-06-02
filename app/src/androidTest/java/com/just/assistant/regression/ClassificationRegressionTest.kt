@@ -34,6 +34,7 @@ class ClassificationRegressionTest {
     @Serializable
     private data class Report(
         val variantId: String,
+        val backend: String,
         val totalCases: Int,
         val correctType: Int,
         val accuracyType: Double,
@@ -86,6 +87,7 @@ class ClassificationRegressionTest {
                         correctType = parsed?.type == case.expectedType,
                     )
             }
+            val backendUsed = engine.lastBackend ?: "unknown"
             engine.unload()
 
             val correctType = results.count { it.correctType }
@@ -99,6 +101,7 @@ class ClassificationRegressionTest {
             val report =
                 Report(
                     variantId = variantId,
+                    backend = backendUsed,
                     totalCases = results.size,
                     correctType = correctType,
                     accuracyType = correctType.toDouble() / results.size,
