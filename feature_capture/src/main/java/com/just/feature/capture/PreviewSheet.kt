@@ -37,6 +37,8 @@ fun PreviewSheet(
     preview: CapturePreview,
     onConfirm: (CapturePreviewConfirmed) -> Unit,
     onCancel: () -> Unit,
+    scheduleEnabledExternal: Boolean? = null,
+    onScheduleToggleRequest: ((Boolean, NoteType) -> Unit)? = null,
 ) {
     var title by remember(preview) { mutableStateOf(preview.title) }
     var body by remember(preview) { mutableStateOf(preview.body) }
@@ -44,9 +46,10 @@ fun PreviewSheet(
     var datetime by remember(preview) {
         mutableStateOf(preview.datetime ?: defaultDatetimeFor())
     }
-    var scheduleEnabled by remember(preview) {
+    var localScheduleEnabled by remember(preview) {
         mutableStateOf(type == NoteType.EVENT || type == NoteType.REMINDER)
     }
+    val scheduleEnabled = scheduleEnabledExternal ?: localScheduleEnabled
     var showDatePicker by remember { mutableStateOf(false) }
 
     val formatter = remember { DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm") }
@@ -70,7 +73,9 @@ fun PreviewSheet(
                     selected = type == t,
                     onClick = {
                         type = t
-                        if (t == NoteType.MEMO) scheduleEnabled = false
+                        if (t == NoteType.MEMO) {
+                            localScheduleEnabled = false
+                        }
                     },
                     label = { Text(stringResource(t.labelRes())) },
                 )
@@ -108,7 +113,13 @@ fun PreviewSheet(
                 Text(toggleLabel, style = MaterialTheme.typography.bodyMedium)
                 Switch(
                     checked = scheduleEnabled,
-                    onCheckedChange = { scheduleEnabled = it },
+                    onCheckedChange = { newValue ->
+                        if (onScheduleToggleRequest != null) {
+                            onScheduleToggleRequest(newValue, type)
+                        } else {
+                            localScheduleEnabled = newValue
+                        }
+                    },
                     modifier = Modifier.testTag("capture_schedule_toggle"),
                 )
             }

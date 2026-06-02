@@ -21,4 +21,12 @@
     <string name="capture_datetime_to_time">→ 시간</string>
     <string name="capture_datetime_to_date">← 날짜</string>
     <string name="capture_schedule_failed">등록 실패 (권한·캘린더 확인)</string>
+    <string name="capture_permission_calendar_title">캘린더 권한 필요</string>
+    <string name="capture_permission_calendar_body">"캘린더에 추가" 기능을 사용하려면 캘린더 권한이 필요합니다.</string>
+    <string name="capture_permission_notification_title">알림 권한 필요</string>
+    <string name="capture_permission_notification_body">알람 표시를 위해 알림 권한이 필요합니다.</string>
+    <string name="capture_permission_exact_alarm_title">정확한 알람 권한 필요</string>
+    <string name="capture_permission_exact_alarm_body">"알람 설정" 기능을 사용하려면 시스템 설정에서 "알람 및 리마인더"를 허용해주세요.</string>
+    <string name="capture_permission_settings_button">설정 열기</string>
+    <string name="capture_permission_cancel">취소</string>
 </resources>
