@@ -29,12 +29,14 @@ import java.time.Instant
 class CaptureViewModelTest {
     private val dispatcher = StandardTestDispatcher()
 
-    private class FakeSaveNote : SaveNoteUseCase {
+    private class FakeSaveNote(private val returnId: Long = 1L) : SaveNoteUseCase {
         var saved: Note? = null
+        var saveCallCount = 0
 
         override suspend fun invoke(note: Note): Long {
+            saveCallCount++
             saved = note
-            return 1L
+            return if (note.id == 0L) returnId else note.id
         }
     }
 
@@ -222,36 +224,75 @@ class CaptureViewModelTest {
         }
 
     @Test
-    fun onConfirm_with_event_scheduleEnabled_calls_scheduleEvent() =
+    fun onConfirm_with_schedule_enabled_EVENT_saves_then_schedules_then_updates() =
         runTest {
-            val fakeEvent =
-                FakeScheduleEvent(
-                    ScheduledItem.Event(
-                        calendarEventId = 42L,
-                        title = "치과",
-                        whenAt = Instant.EPOCH,
-                    ),
-                )
             val save = FakeSaveNote()
-            val vm = CaptureViewModel(save, FakeClassify(classifyResult(NoteType.EVENT, "치과", "")), fakeEvent, FakeScheduleReminder())
-            vm.onInputChanged("치과")
+            val schedEvent =
+                FakeScheduleEvent(
+                    result =
+                        ScheduledItem.Event(
+                            calendarEventId = 99L,
+                            title = "치과",
+                            whenAt = Instant.parse("2026-05-30T15:00:00Z"),
+                        ),
+                )
+            val vm =
+                CaptureViewModel(
+                    save,
+                    FakeClassify(classifyResult(NoteType.EVENT, "치과", "")),
+                    schedEvent,
+                    FakeScheduleReminder(),
+                )
+            vm.onInputChanged("내일 3시 치과")
             vm.onPrepare()
             advanceUntilIdle()
-            val at = Instant.parse("2026-06-01T10:00:00Z")
+            val prepared = vm.state.first().preview!!.copy(datetime = Instant.parse("2026-05-30T15:00:00Z"))
             vm.onConfirm(
                 CapturePreviewConfirmed(
-                    title = "치과",
-                    body = "",
+                    title = prepared.title,
+                    body = prepared.body,
                     type = NoteType.EVENT,
-                    tags = emptyList(),
-                    datetime = at,
+                    tags = prepared.tags,
+                    datetime = prepared.datetime,
                     scheduleEnabled = true,
                 ),
             )
             advanceUntilIdle()
-            assertEquals("치과", fakeEvent.lastInput?.title)
-            assertEquals(at, fakeEvent.lastInput?.whenAt)
-            assertEquals(42L, save.saved?.calendarEventId)
+            assertEquals("치과", schedEvent.lastInput?.title)
+            assertEquals(2, save.saveCallCount)
+            assertEquals(99L, save.saved?.calendarEventId)
+        }
+
+    @Test
+    fun onConfirm_with_schedule_enabled_REMINDER_passes_newId_to_scheduleReminder() =
+        runTest {
+            val save = FakeSaveNote(returnId = 77L)
+            val schedReminder = FakeScheduleReminder()
+            val vm =
+                CaptureViewModel(
+                    save,
+                    FakeClassify(classifyResult(NoteType.REMINDER, "콜백", "")),
+                    FakeScheduleEvent(null),
+                    schedReminder,
+                )
+            vm.onInputChanged("내일 콜백 잊지 말기")
+            vm.onPrepare()
+            advanceUntilIdle()
+            val prepared = vm.state.first().preview!!.copy(datetime = Instant.parse("2026-05-30T15:00:00Z"))
+            vm.onConfirm(
+                CapturePreviewConfirmed(
+                    title = prepared.title,
+                    body = prepared.body,
+                    type = NoteType.REMINDER,
+                    tags = prepared.tags,
+                    datetime = prepared.datetime,
+                    scheduleEnabled = true,
+                ),
+            )
+            advanceUntilIdle()
+            assertEquals(77L, schedReminder.lastNoteId)
+            assertEquals(2, save.saveCallCount)
+            assertEquals(schedReminder.lastRequestId, save.saved?.alarmRequestId)
         }
 
     @Test
