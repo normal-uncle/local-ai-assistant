@@ -1,6 +1,7 @@
 package com.just.feature.memo
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
@@ -8,8 +9,21 @@ import com.just.feature.memo.memoDetail.MemoDetailScreen
 import com.just.feature.memo.memoList.MemoListScreen
 
 @Composable
-fun MemoScene(onBackToApp: () -> Unit) {
+fun MemoScene(
+    onBackToApp: () -> Unit,
+    initialDetailNoteId: Long? = null,
+) {
     val backStack = rememberNavBackStack(MemoSubRoute.List)
+    LaunchedEffect(initialDetailNoteId) {
+        if (initialDetailNoteId != null && initialDetailNoteId >= 0L) {
+            val last = backStack.lastOrNull()
+            val alreadyShowing =
+                last is MemoSubRoute.Detail && last.noteId == initialDetailNoteId
+            if (!alreadyShowing) {
+                backStack.add(MemoSubRoute.Detail(initialDetailNoteId))
+            }
+        }
+    }
     NavDisplay(
         backStack = backStack,
         entryProvider =
