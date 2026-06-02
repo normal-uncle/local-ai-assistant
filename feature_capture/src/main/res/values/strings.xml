@@ -4,6 +4,7 @@
     <string name="capture_top_open_list">목록</string>
     <string name="capture_input_label">내용</string>
     <string name="capture_prepare">저장 미리보기</string>
+    <string name="capture_preparing">AI 분석 중…</string>
     <string name="capture_preview_title">미리보기</string>
     <string name="capture_field_title">제목</string>
     <string name="capture_field_body">본문</string>
