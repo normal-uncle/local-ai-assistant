@@ -87,6 +87,20 @@ class CaptureViewModel
             viewModelScope.launch {
                 val now = Instant.now()
                 try {
+                    val initialNote =
+                        Note(
+                            title = confirmed.title,
+                            body = confirmed.body,
+                            type = confirmed.type,
+                            tags = confirmed.tags,
+                            datetime = confirmed.datetime,
+                            createdAt = now,
+                            updatedAt = now,
+                            calendarEventId = null,
+                            alarmRequestId = null,
+                        )
+                    val newId = saveNote(initialNote)
+
                     var calendarEventId: Long? = null
                     var alarmRequestId: Int? = null
 
@@ -113,7 +127,7 @@ class CaptureViewModel
                                             whenAt = confirmed.datetime,
                                         ),
                                         requestId = requestId,
-                                        noteId = 0L,
+                                        noteId = newId,
                                     )
                                 alarmRequestId = reminder.alarmRequestId
                             }
@@ -121,19 +135,15 @@ class CaptureViewModel
                         }
                     }
 
-                    saveNote(
-                        Note(
-                            title = confirmed.title,
-                            body = confirmed.body,
-                            type = confirmed.type,
-                            tags = confirmed.tags,
-                            datetime = confirmed.datetime,
-                            createdAt = now,
-                            updatedAt = now,
-                            calendarEventId = calendarEventId,
-                            alarmRequestId = alarmRequestId,
-                        ),
-                    )
+                    if (calendarEventId != null || alarmRequestId != null) {
+                        saveNote(
+                            initialNote.copy(
+                                id = newId,
+                                calendarEventId = calendarEventId,
+                                alarmRequestId = alarmRequestId,
+                            ),
+                        )
+                    }
                     _state.update { CaptureState() }
                 } catch (e: Exception) {
                     _state.update { it.copy(isSaving = false, error = e.message ?: "저장 실패") }
