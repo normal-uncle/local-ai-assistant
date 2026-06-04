@@ -41,4 +41,40 @@ class CalendarWriterTest {
         )
         assertTrue("delete should succeed for inserted event", writer.deleteEvent(eventId!!))
     }
+
+    @Test
+    fun insertEvent_then_updateEvent_then_deleteEvent_round_trips() {
+        val writer = CalendarWriter(ApplicationProvider.getApplicationContext())
+        val start = System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1)
+        val end = start + TimeUnit.HOURS.toMillis(1)
+
+        val eventId =
+            writer.insertEvent(
+                CalendarEventDraft(
+                    title = "original",
+                    description = "before",
+                    startEpochMs = start,
+                    endEpochMs = end,
+                ),
+            )
+        assumeTrue(
+            "Device has no visible calendar",
+            eventId != null,
+        )
+
+        val newStart = start + TimeUnit.HOURS.toMillis(2)
+        val newEnd = newStart + TimeUnit.HOURS.toMillis(1)
+        val updated =
+            writer.updateEvent(
+                eventId!!,
+                CalendarEventDraft(
+                    title = "updated",
+                    description = "after",
+                    startEpochMs = newStart,
+                    endEpochMs = newEnd,
+                ),
+            )
+        assertTrue("update should succeed for existing event", updated)
+        assertTrue("delete should succeed after update", writer.deleteEvent(eventId))
+    }
 }

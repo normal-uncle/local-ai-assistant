@@ -13,7 +13,7 @@ class AlarmSchedulerTest {
         val requestId = 12345
         val whenMs = System.currentTimeMillis() + 60_000L
 
-        scheduler.schedule(requestId, whenMs, "test title", "test body")
+        scheduler.schedule(requestId, whenMs, "test title", "test body", 1L)
         scheduler.cancel(requestId)
     }
 }
