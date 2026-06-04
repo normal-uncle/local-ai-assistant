@@ -1,5 +1,7 @@
 package com.just.assistant.usecase
 
+import com.just.assistant.local.alarm.AlarmCompleteAction
+import com.just.assistant.local.alarm.AlarmSnoozeAction
 import com.just.assistant.usecase.capture.di.ClassifyCaptureUseCase
 import com.just.assistant.usecase.capture.impl.ClassifyCaptureUseCaseImpl
 import com.just.assistant.usecase.model.di.EnsureModelDownloadedUseCase
@@ -84,4 +86,10 @@ abstract class UseCaseModule {
 
     @Binds
     abstract fun bindRescheduleNoteUseCase(impl: RescheduleNoteUseCaseImpl): RescheduleNoteUseCase
+
+    @Binds
+    abstract fun bindAlarmCompleteAction(impl: CompleteScheduledNoteUseCaseImpl): AlarmCompleteAction
+
+    @Binds
+    abstract fun bindAlarmSnoozeAction(impl: SnoozeReminderUseCaseImpl): AlarmSnoozeAction
 }
