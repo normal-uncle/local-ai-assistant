@@ -39,6 +39,22 @@ class CalendarWriter
             return uri?.let { ContentUris.parseId(it) }
         }
 
+        fun updateEvent(
+            eventId: Long,
+            draft: CalendarEventDraft,
+        ): Boolean {
+            val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
+            val values =
+                ContentValues().apply {
+                    put(CalendarContract.Events.TITLE, draft.title)
+                    put(CalendarContract.Events.DESCRIPTION, draft.description)
+                    put(CalendarContract.Events.DTSTART, draft.startEpochMs)
+                    put(CalendarContract.Events.DTEND, draft.endEpochMs)
+                    put(CalendarContract.Events.EVENT_TIMEZONE, draft.timeZoneId)
+                }
+            return context.contentResolver.update(uri, values, null, null) > 0
+        }
+
         fun deleteEvent(eventId: Long): Boolean {
             val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
             return context.contentResolver.delete(uri, null, null) > 0
