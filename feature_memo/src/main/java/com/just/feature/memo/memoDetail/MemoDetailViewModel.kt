@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.just.assistant.repository.model.Note
 import com.just.assistant.usecase.note.di.FindNoteByIdUseCase
+import com.just.assistant.usecase.schedule.di.RescheduleNoteUseCase
 import com.just.assistant.usecase.schedule.di.UnscheduleNoteUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.Instant
 
 sealed interface MemoDetailState {
     data object Loading : MemoDetailState
@@ -29,6 +31,7 @@ class MemoDetailViewModel
         @Assisted private val noteId: Long,
         private val findById: FindNoteByIdUseCase,
         private val unschedule: UnscheduleNoteUseCase,
+        private val reschedule: RescheduleNoteUseCase,
     ) : ViewModel() {
         private val _state = MutableStateFlow<MemoDetailState>(MemoDetailState.Loading)
         val state: StateFlow<MemoDetailState> = _state.asStateFlow()
@@ -40,6 +43,13 @@ class MemoDetailViewModel
         fun onUnschedule() {
             viewModelScope.launch {
                 unschedule(noteId)
+                load()
+            }
+        }
+
+        fun onReschedule(newDateTime: Instant) {
+            viewModelScope.launch {
+                reschedule(noteId, newDateTime)
                 load()
             }
         }

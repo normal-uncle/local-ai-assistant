@@ -3,6 +3,7 @@ package com.just.feature.memo.memoDetail
 import com.just.assistant.repository.model.Note
 import com.just.assistant.repository.model.NoteType
 import com.just.assistant.usecase.note.di.FindNoteByIdUseCase
+import com.just.assistant.usecase.schedule.di.RescheduleNoteUseCase
 import com.just.assistant.usecase.schedule.di.UnscheduleNoteUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -52,6 +53,19 @@ class MemoDetailViewModelTest {
         }
     }
 
+    private class FakeReschedule : RescheduleNoteUseCase {
+        var lastId: Long? = null
+        var lastWhen: java.time.Instant? = null
+
+        override suspend fun invoke(
+            noteId: Long,
+            newDateTime: java.time.Instant,
+        ) {
+            lastId = noteId
+            lastWhen = newDateTime
+        }
+    }
+
     private fun note(
         id: Long = 1L,
         calendarEventId: Long? = null,
@@ -72,7 +86,7 @@ class MemoDetailViewModelTest {
     fun init_loads_note_into_Loaded_state() =
         runTest(dispatcher) {
             val find = FakeFind(note(calendarEventId = 99L))
-            val vm = MemoDetailViewModel(1L, find, FakeUnschedule())
+            val vm = MemoDetailViewModel(1L, find, FakeUnschedule(), FakeReschedule())
             advanceUntilIdle()
             val state = vm.state.value
             assertTrue(state is MemoDetailState.Loaded)
@@ -83,7 +97,7 @@ class MemoDetailViewModelTest {
     fun init_with_missing_note_yields_NotFound() =
         runTest(dispatcher) {
             val find = FakeFind(null)
-            val vm = MemoDetailViewModel(1L, find, FakeUnschedule())
+            val vm = MemoDetailViewModel(1L, find, FakeUnschedule(), FakeReschedule())
             advanceUntilIdle()
             assertEquals(MemoDetailState.NotFound, vm.state.value)
         }
@@ -93,7 +107,7 @@ class MemoDetailViewModelTest {
         runTest(dispatcher) {
             val find = FakeFind(note(calendarEventId = 99L, alarmRequestId = 7))
             val unschedule = FakeUnschedule()
-            val vm = MemoDetailViewModel(1L, find, unschedule)
+            val vm = MemoDetailViewModel(1L, find, unschedule, FakeReschedule())
             advanceUntilIdle()
             find.update(note(calendarEventId = null, alarmRequestId = null))
 
@@ -105,5 +119,27 @@ class MemoDetailViewModelTest {
             assertTrue(state is MemoDetailState.Loaded)
             assertNull((state as MemoDetailState.Loaded).note.calendarEventId)
             assertNull(state.note.alarmRequestId)
+        }
+
+    @Test
+    fun onReschedule_calls_use_case_and_reloads_state() =
+        runTest(dispatcher) {
+            val find = FakeFind(note(calendarEventId = 99L))
+            val reschedule = FakeReschedule()
+            val vm =
+                MemoDetailViewModel(
+                    1L,
+                    find,
+                    FakeUnschedule(),
+                    reschedule,
+                )
+            advanceUntilIdle()
+
+            val newWhen = java.time.Instant.parse("2026-07-01T10:00:00Z")
+            vm.onReschedule(newWhen)
+            advanceUntilIdle()
+
+            assertEquals(1L, reschedule.lastId)
+            assertEquals(newWhen, reschedule.lastWhen)
         }
 }

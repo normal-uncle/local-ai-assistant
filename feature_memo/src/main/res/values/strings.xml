@@ -9,4 +9,12 @@
     <string name="memo_detail_chip_alarm">알람 설정됨</string>
     <string name="memo_detail_unschedule">등록 취소</string>
     <string name="memo_detail_unschedule_done">등록 취소됨</string>
+    <string name="memo_detail_reschedule">시간 변경</string>
+    <string name="memo_detail_reschedule_done">시간이 변경됨</string>
+    <string name="memo_detail_completed">완료됨</string>
+    <string name="memo_datetime_picker_title">날짜·시간 선택</string>
+    <string name="memo_datetime_confirm">확인</string>
+    <string name="memo_datetime_cancel">취소</string>
+    <string name="memo_datetime_to_time">→ 시간</string>
+    <string name="memo_datetime_to_date">← 날짜</string>
 </resources>
