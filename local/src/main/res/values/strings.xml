@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="notification_channel_reminders">리마인더</string>
+    <string name="notification_action_done">완료</string>
+    <string name="notification_action_snooze">5분 뒤</string>
 </resources>

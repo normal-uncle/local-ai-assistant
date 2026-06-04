@@ -1,5 +1,6 @@
 package com.just.assistant.usecase.schedule.impl
 
+import com.just.assistant.local.alarm.AlarmCompleteAction
 import com.just.assistant.repository.di.NoteRepository
 import com.just.assistant.usecase.schedule.di.CompleteScheduledNoteUseCase
 import com.just.assistant.usecase.schedule.di.UnscheduleNoteUseCase
@@ -10,7 +11,7 @@ class CompleteScheduledNoteUseCaseImpl
     constructor(
         private val noteRepository: NoteRepository,
         private val unschedule: UnscheduleNoteUseCase,
-    ) : CompleteScheduledNoteUseCase {
+    ) : CompleteScheduledNoteUseCase, AlarmCompleteAction {
         override suspend fun invoke(noteId: Long) {
             unschedule(noteId)
             val note = noteRepository.findById(noteId) ?: return
