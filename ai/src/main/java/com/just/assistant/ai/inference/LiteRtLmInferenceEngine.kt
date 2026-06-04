@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.google.ai.edge.litertlm.Backend
 import com.google.ai.edge.litertlm.Content
+import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.ConversationConfig
 import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.EngineConfig
@@ -106,7 +107,10 @@ class LiteRtLmInferenceEngine
 
         override fun isReady(): Boolean = engine != null
 
-        override suspend fun generate(prompt: String): String =
+        override suspend fun generate(
+            prompt: String,
+            images: List<ByteArray>,
+        ): String =
             withContext(Dispatchers.IO) {
                 val e = engine ?: error("InferenceEngine not loaded; call load() first")
                 val cfg = currentConfig ?: error("InferenceEngine not loaded; call load() first")
@@ -127,7 +131,16 @@ class LiteRtLmInferenceEngine
                     )
 
                 e.createConversation(conversationConfig).use { conversation ->
-                    val response = conversation.sendMessage(prompt)
+                    val response =
+                        if (images.isEmpty()) {
+                            conversation.sendMessage(prompt)
+                        } else {
+                            val contents =
+                                Contents.of(
+                                    images.map { Content.ImageBytes(it) } + Content.Text(prompt),
+                                )
+                            conversation.sendMessage(contents)
+                        }
                     response.contents.contents
                         .filterIsInstance<Content.Text>()
                         .joinToString(separator = "") { it.text }

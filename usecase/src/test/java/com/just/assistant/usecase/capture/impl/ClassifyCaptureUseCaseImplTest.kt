@@ -40,7 +40,10 @@ class ClassifyCaptureUseCaseImplTest {
 
         override fun isReady(): Boolean = loaded
 
-        override suspend fun generate(prompt: String): String {
+        override suspend fun generate(
+            prompt: String,
+            images: List<ByteArray>,
+        ): String {
             if (shouldThrow) error("inference failed")
             return response
         }
