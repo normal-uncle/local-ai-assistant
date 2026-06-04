@@ -40,4 +40,22 @@ class MigrationTest {
             assertEquals(true, c.isNull(1))
         }
     }
+
+    @Test
+    fun migrate_2_to_3_adds_isCompleted_column_with_default_zero() {
+        val dbName = "migration-23-test-${System.currentTimeMillis()}"
+        helper.createDatabase(dbName, 2).use { db ->
+            db.execSQL(
+                """
+                INSERT INTO notes (id, title, body, type, tags, datetimeIso, createdAtEpochMs, updatedAtEpochMs, calendarEventId, alarmRequestId)
+                VALUES (1, 't', 'b', 'MEMO', '', NULL, 100, 100, NULL, NULL)
+                """.trimIndent(),
+            )
+        }
+        val migratedDb = helper.runMigrationsAndValidate(dbName, 3, true, AssistantDatabase.MIGRATION_2_3)
+        migratedDb.query("SELECT isCompleted FROM notes WHERE id = 1").use { c ->
+            assertEquals(true, c.moveToFirst())
+            assertEquals(0, c.getInt(0))
+        }
+    }
 }

@@ -15,4 +15,5 @@ data class NoteEntity(
     val updatedAtEpochMs: Long,
     val calendarEventId: Long? = null,
     val alarmRequestId: Int? = null,
+    val isCompleted: Boolean = false,
 )
