@@ -51,6 +51,7 @@ class NoteRepositoryImpl
                 updatedAt = Instant.ofEpochMilli(updatedAtEpochMs),
                 calendarEventId = calendarEventId,
                 alarmRequestId = alarmRequestId,
+                isCompleted = isCompleted,
             )
 
         private fun Note.toEntity(): NoteEntity =
@@ -65,5 +66,6 @@ class NoteRepositoryImpl
                 updatedAtEpochMs = updatedAt.toEpochMilli(),
                 calendarEventId = calendarEventId,
                 alarmRequestId = alarmRequestId,
+                isCompleted = isCompleted,
             )
     }

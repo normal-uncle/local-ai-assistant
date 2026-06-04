@@ -7,7 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.just.assistant.local.note.NoteDao
 import com.just.assistant.local.note.NoteEntity
 
-@Database(entities = [NoteEntity::class], version = 2, exportSchema = true)
+@Database(entities = [NoteEntity::class], version = 3, exportSchema = true)
 abstract class AssistantDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
 
@@ -17,6 +17,13 @@ abstract class AssistantDatabase : RoomDatabase() {
                 override fun migrate(db: SupportSQLiteDatabase) {
                     db.execSQL("ALTER TABLE notes ADD COLUMN calendarEventId INTEGER")
                     db.execSQL("ALTER TABLE notes ADD COLUMN alarmRequestId INTEGER")
+                }
+            }
+
+        val MIGRATION_2_3: Migration =
+            object : Migration(2, 3) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("ALTER TABLE notes ADD COLUMN isCompleted INTEGER NOT NULL DEFAULT 0")
                 }
             }
     }

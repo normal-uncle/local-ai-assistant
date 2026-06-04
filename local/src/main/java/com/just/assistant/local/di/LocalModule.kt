@@ -22,7 +22,10 @@ object LocalModule {
     ): AssistantDatabase =
         Room
             .databaseBuilder(ctx, AssistantDatabase::class.java, "assistant.db")
-            .addMigrations(AssistantDatabase.MIGRATION_1_2)
+            .addMigrations(
+                AssistantDatabase.MIGRATION_1_2,
+                AssistantDatabase.MIGRATION_2_3,
+            )
             .build()
 
     @Provides

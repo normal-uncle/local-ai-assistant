@@ -127,4 +127,22 @@ class NoteRepositoryImplTest {
             assertEquals(42L, found?.calendarEventId)
             assertEquals(7, found?.alarmRequestId)
         }
+
+    @Test
+    fun save_then_findById_preserves_isCompleted() =
+        runTest {
+            val id =
+                repo.save(
+                    Note(
+                        title = "completed",
+                        body = "",
+                        type = NoteType.REMINDER,
+                        createdAt = fixedNow,
+                        updatedAt = fixedNow,
+                        isCompleted = true,
+                    ),
+                )
+            val found = repo.findById(id)
+            assertEquals(true, found?.isCompleted)
+        }
 }
