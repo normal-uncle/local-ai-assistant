@@ -20,11 +20,13 @@ import com.just.assistant.usecase.schedule.di.CancelScheduledItemUseCase
 import com.just.assistant.usecase.schedule.di.CompleteScheduledNoteUseCase
 import com.just.assistant.usecase.schedule.di.ScheduleEventUseCase
 import com.just.assistant.usecase.schedule.di.ScheduleReminderUseCase
+import com.just.assistant.usecase.schedule.di.SnoozeReminderUseCase
 import com.just.assistant.usecase.schedule.di.UnscheduleNoteUseCase
 import com.just.assistant.usecase.schedule.impl.CancelScheduledItemUseCaseImpl
 import com.just.assistant.usecase.schedule.impl.CompleteScheduledNoteUseCaseImpl
 import com.just.assistant.usecase.schedule.impl.ScheduleEventUseCaseImpl
 import com.just.assistant.usecase.schedule.impl.ScheduleReminderUseCaseImpl
+import com.just.assistant.usecase.schedule.impl.SnoozeReminderUseCaseImpl
 import com.just.assistant.usecase.schedule.impl.UnscheduleNoteUseCaseImpl
 import dagger.Binds
 import dagger.Module
@@ -74,4 +76,7 @@ abstract class UseCaseModule {
 
     @Binds
     abstract fun bindCompleteScheduledNoteUseCase(impl: CompleteScheduledNoteUseCaseImpl): CompleteScheduledNoteUseCase
+
+    @Binds
+    abstract fun bindSnoozeReminderUseCase(impl: SnoozeReminderUseCaseImpl): SnoozeReminderUseCase
 }
