@@ -18,12 +18,14 @@ import com.just.assistant.usecase.note.impl.ObserveNotesUseCaseImpl
 import com.just.assistant.usecase.note.impl.SaveNoteUseCaseImpl
 import com.just.assistant.usecase.schedule.di.CancelScheduledItemUseCase
 import com.just.assistant.usecase.schedule.di.CompleteScheduledNoteUseCase
+import com.just.assistant.usecase.schedule.di.RescheduleNoteUseCase
 import com.just.assistant.usecase.schedule.di.ScheduleEventUseCase
 import com.just.assistant.usecase.schedule.di.ScheduleReminderUseCase
 import com.just.assistant.usecase.schedule.di.SnoozeReminderUseCase
 import com.just.assistant.usecase.schedule.di.UnscheduleNoteUseCase
 import com.just.assistant.usecase.schedule.impl.CancelScheduledItemUseCaseImpl
 import com.just.assistant.usecase.schedule.impl.CompleteScheduledNoteUseCaseImpl
+import com.just.assistant.usecase.schedule.impl.RescheduleNoteUseCaseImpl
 import com.just.assistant.usecase.schedule.impl.ScheduleEventUseCaseImpl
 import com.just.assistant.usecase.schedule.impl.ScheduleReminderUseCaseImpl
 import com.just.assistant.usecase.schedule.impl.SnoozeReminderUseCaseImpl
@@ -79,4 +81,7 @@ abstract class UseCaseModule {
 
     @Binds
     abstract fun bindSnoozeReminderUseCase(impl: SnoozeReminderUseCaseImpl): SnoozeReminderUseCase
+
+    @Binds
+    abstract fun bindRescheduleNoteUseCase(impl: RescheduleNoteUseCaseImpl): RescheduleNoteUseCase
 }
