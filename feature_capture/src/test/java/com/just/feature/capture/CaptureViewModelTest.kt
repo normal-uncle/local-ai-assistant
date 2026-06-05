@@ -49,6 +49,16 @@ class CaptureViewModelTest {
         }
     }
 
+    private class FakeClassifyImage(private val result: com.just.assistant.ai.prompt.ClassificationResult? = null) :
+        com.just.assistant.usecase.capture.di.ClassifyImageCaptureUseCase {
+        override suspend operator fun invoke(imageBytes: ByteArray, caption: String?) = result
+    }
+
+    private class FakeImageStore : com.just.assistant.local.image.ImageStore {
+        override suspend fun persist(source: android.net.Uri): android.net.Uri = source
+        override suspend fun toClassifierBytes(source: android.net.Uri): ByteArray = byteArrayOf(1)
+    }
+
     private class FakeScheduleEvent(private val result: ScheduledItem.Event?) : ScheduleEventUseCase {
         var lastInput: ScheduleEventInput? = null
 
@@ -112,6 +122,8 @@ class CaptureViewModelTest {
                     FakeClassify(classifyResult(NoteType.EVENT, "치과", "내일 3시")),
                     FakeScheduleEvent(null),
                     FakeScheduleReminder(),
+                    FakeClassifyImage(),
+                    FakeImageStore(),
                 )
             vm.onInputChanged("내일 치과 가야 함")
             vm.onPrepare()
@@ -125,7 +137,7 @@ class CaptureViewModelTest {
     @Test
     fun onPrepare_falls_back_to_rule_based_when_classifier_returns_null() =
         runTest {
-            val vm = CaptureViewModel(FakeSaveNote(), FakeClassify(null), FakeScheduleEvent(null), FakeScheduleReminder())
+            val vm = CaptureViewModel(FakeSaveNote(), FakeClassify(null), FakeScheduleEvent(null), FakeScheduleReminder(), FakeClassifyImage(), FakeImageStore())
             vm.onInputChanged("장보기\n우유, 빵")
             vm.onPrepare()
             advanceUntilIdle()
@@ -139,7 +151,7 @@ class CaptureViewModelTest {
     fun onPrepare_with_blank_input_does_nothing() =
         runTest {
             val classify = FakeClassify(classifyResult())
-            val vm = CaptureViewModel(FakeSaveNote(), classify, FakeScheduleEvent(null), FakeScheduleReminder())
+            val vm = CaptureViewModel(FakeSaveNote(), classify, FakeScheduleEvent(null), FakeScheduleReminder(), FakeClassifyImage(), FakeImageStore())
             vm.onInputChanged("   ")
             vm.onPrepare()
             advanceUntilIdle()
@@ -151,7 +163,7 @@ class CaptureViewModelTest {
     fun onPrepare_sets_isPreparing_true_during_call() =
         runTest {
             val classify = FakeClassify(classifyResult())
-            val vm = CaptureViewModel(FakeSaveNote(), classify, FakeScheduleEvent(null), FakeScheduleReminder())
+            val vm = CaptureViewModel(FakeSaveNote(), classify, FakeScheduleEvent(null), FakeScheduleReminder(), FakeClassifyImage(), FakeImageStore())
             vm.onInputChanged("test")
             vm.onPrepare()
             assertEquals(true, vm.state.first().isPreparing)
@@ -163,7 +175,7 @@ class CaptureViewModelTest {
     fun onPrepare_double_call_is_guarded() =
         runTest {
             val classify = FakeClassify(classifyResult())
-            val vm = CaptureViewModel(FakeSaveNote(), classify, FakeScheduleEvent(null), FakeScheduleReminder())
+            val vm = CaptureViewModel(FakeSaveNote(), classify, FakeScheduleEvent(null), FakeScheduleReminder(), FakeClassifyImage(), FakeImageStore())
             vm.onInputChanged("test")
             vm.onPrepare()
             vm.onPrepare()
@@ -182,6 +194,8 @@ class CaptureViewModelTest {
                     FakeClassify(classifyResult(NoteType.MEMO, "원본", "")),
                     FakeScheduleEvent(null),
                     FakeScheduleReminder(),
+                    FakeClassifyImage(),
+                    FakeImageStore(),
                 )
             vm.onInputChanged("원본")
             vm.onPrepare()
@@ -201,7 +215,7 @@ class CaptureViewModelTest {
                 object : SaveNoteUseCase {
                     override suspend fun invoke(note: Note): Long = throw RuntimeException("disk full")
                 }
-            val vm = CaptureViewModel(throwingSave, FakeClassify(classifyResult()), FakeScheduleEvent(null), FakeScheduleReminder())
+            val vm = CaptureViewModel(throwingSave, FakeClassify(classifyResult()), FakeScheduleEvent(null), FakeScheduleReminder(), FakeClassifyImage(), FakeImageStore())
             vm.onInputChanged("test")
             vm.onPrepare()
             advanceUntilIdle()
@@ -215,7 +229,7 @@ class CaptureViewModelTest {
     @Test
     fun onCancel_clears_preview() =
         runTest {
-            val vm = CaptureViewModel(FakeSaveNote(), FakeClassify(classifyResult()), FakeScheduleEvent(null), FakeScheduleReminder())
+            val vm = CaptureViewModel(FakeSaveNote(), FakeClassify(classifyResult()), FakeScheduleEvent(null), FakeScheduleReminder(), FakeClassifyImage(), FakeImageStore())
             vm.onInputChanged("test")
             vm.onPrepare()
             advanceUntilIdle()
@@ -242,6 +256,8 @@ class CaptureViewModelTest {
                     FakeClassify(classifyResult(NoteType.EVENT, "치과", "")),
                     schedEvent,
                     FakeScheduleReminder(),
+                    FakeClassifyImage(),
+                    FakeImageStore(),
                 )
             vm.onInputChanged("내일 3시 치과")
             vm.onPrepare()
@@ -274,6 +290,8 @@ class CaptureViewModelTest {
                     FakeClassify(classifyResult(NoteType.REMINDER, "콜백", "")),
                     FakeScheduleEvent(null),
                     schedReminder,
+                    FakeClassifyImage(),
+                    FakeImageStore(),
                 )
             vm.onInputChanged("내일 콜백 잊지 말기")
             vm.onPrepare()
@@ -300,7 +318,7 @@ class CaptureViewModelTest {
         runTest {
             val fakeEvent = FakeScheduleEvent(null)
             val save = FakeSaveNote()
-            val vm = CaptureViewModel(save, FakeClassify(classifyResult(NoteType.EVENT, "치과", "")), fakeEvent, FakeScheduleReminder())
+            val vm = CaptureViewModel(save, FakeClassify(classifyResult(NoteType.EVENT, "치과", "")), fakeEvent, FakeScheduleReminder(), FakeClassifyImage(), FakeImageStore())
             vm.onInputChanged("치과")
             vm.onPrepare()
             advanceUntilIdle()
