@@ -64,13 +64,19 @@ class LiteRtLmInferenceEngine
                 engine = null
                 _lastBackend = null
 
-                val baseConfig =
+                val textConfig =
                     EngineConfig(
                         modelPath = modelFile.absolutePath,
                         backend = Backend.CPU(),
                         maxNumTokens = config.maxTokens,
                         cacheDir = context.cacheDir.absolutePath,
                     )
+                val baseConfig =
+                    if (config.enableVision) {
+                        textConfig.copy(visionBackend = Backend.CPU(), maxNumImages = 1)
+                    } else {
+                        textConfig
+                    }
 
                 val (newEngine, backend) =
                     if (!config.preferGpu) {
