@@ -26,12 +26,35 @@ class CaptureScreenTest {
         override suspend operator fun invoke(userInput: String): ClassificationResult? = null
     }
 
+    private class FakeScheduleEvent : com.just.assistant.usecase.schedule.di.ScheduleEventUseCase {
+        override suspend operator fun invoke(input: com.just.assistant.repository.model.ScheduleEventInput) = null
+    }
+    private class FakeScheduleReminder : com.just.assistant.usecase.schedule.di.ScheduleReminderUseCase {
+        override suspend operator fun invoke(
+            input: com.just.assistant.repository.model.ScheduleReminderInput,
+            requestId: Int,
+            noteId: Long,
+        ) = com.just.assistant.repository.model.ScheduledItem.Reminder(
+            alarmRequestId = requestId, title = input.title, whenAt = input.whenAt,
+        )
+    }
+    private class FakeClassifyImage : com.just.assistant.usecase.capture.di.ClassifyImageCaptureUseCase {
+        override suspend operator fun invoke(imageBytes: ByteArray, caption: String?) = null
+    }
+    private class FakeImageStore : com.just.assistant.local.image.ImageStore {
+        override suspend fun persist(source: android.net.Uri): android.net.Uri = source
+        override suspend fun toClassifierBytes(source: android.net.Uri): ByteArray = byteArrayOf(1)
+    }
+
     @Test
     fun input_then_prepare_shows_preview_with_title_and_body() {
         compose.setContent {
             CaptureScreen(
                 onOpenMemo = {},
-                viewModel = CaptureViewModel(FakeSaveNote(), FakeClassify()),
+                viewModel = CaptureViewModel(
+                    FakeSaveNote(), FakeClassify(), FakeScheduleEvent(), FakeScheduleReminder(),
+                    FakeClassifyImage(), FakeImageStore(),
+                ),
             )
         }
 

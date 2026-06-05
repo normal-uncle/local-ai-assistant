@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.just.feature.memo.DateTimePickerSheet
 import com.just.feature.memo.R
 
@@ -77,6 +79,14 @@ internal fun MemoDetailScreen(
                         }
                     }
                     Spacer(Modifier.height(8.dp))
+                    note.imageUri?.let { uri ->
+                        AsyncImage(
+                            model = uri,
+                            contentDescription = stringResource(R.string.memo_detail_image_desc),
+                            modifier = Modifier.fillMaxWidth().height(220.dp),
+                        )
+                        Spacer(Modifier.height(8.dp))
+                    }
                     Text(
                         text = note.body,
                         style = MaterialTheme.typography.bodyLarge,

@@ -6,4 +6,6 @@ data class InferenceConfig(
     val topK: Int = 40,
     val topP: Float = 0.95f,
     val preferGpu: Boolean = true,
+    /** true면 EngineConfig에 visionBackend + maxNumImages를 실어 이미지 입력을 허용한다. */
+    val enableVision: Boolean = false,
 )

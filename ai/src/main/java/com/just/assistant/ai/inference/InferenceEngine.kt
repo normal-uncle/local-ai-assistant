@@ -19,10 +19,16 @@ interface InferenceEngine {
     fun isReady(): Boolean
 
     /**
-     * 동기 추론. [prompt]에 대한 텍스트 응답을 반환.
+     * 텍스트 전용 추론. [generate] (prompt, emptyList) 와 동일.
      * 호출 전 [load] 필요. 미로드 상태에서 호출 시 IllegalStateException.
      */
-    suspend fun generate(prompt: String): String
+    suspend fun generate(prompt: String): String = generate(prompt, emptyList())
+
+    /**
+     * 멀티모달 추론. [images] 가 비었으면 텍스트 전용과 동일.
+     * 각 이미지는 디코드 가능한 JPEG/PNG 등의 바이트.
+     */
+    suspend fun generate(prompt: String, images: List<ByteArray>): String
 
     /**
      * 마지막 [load] 호출에서 실제 사용된 backend 식별자. 로드 전이면 null.

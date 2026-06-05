@@ -10,6 +10,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,20 +19,18 @@ import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [34])
-class ClassifyCaptureUseCaseImplTest {
+class ClassifyImageCaptureUseCaseImplTest {
     private class FakeEngine(
         private val response: String,
         var shouldThrow: Boolean = false,
     ) : InferenceEngine {
         private var loaded = false
-        var loadCount = 0
+        var lastImageCount = -1
+        var lastConfig: InferenceConfig? = null
 
-        override suspend fun load(
-            modelFile: File,
-            config: InferenceConfig,
-        ) {
-            loadCount++
+        override suspend fun load(modelFile: File, config: InferenceConfig) {
             loaded = true
+            lastConfig = config
         }
 
         override fun unload() {
@@ -40,11 +39,9 @@ class ClassifyCaptureUseCaseImplTest {
 
         override fun isReady(): Boolean = loaded
 
-        override suspend fun generate(
-            prompt: String,
-            images: List<ByteArray>,
-        ): String {
+        override suspend fun generate(prompt: String, images: List<ByteArray>): String {
             if (shouldThrow) error("inference failed")
+            lastImageCount = images.size
             return response
         }
     }
@@ -66,55 +63,39 @@ class ClassifyCaptureUseCaseImplTest {
     }
 
     @Test
-    fun returns_parsed_result_on_successful_inference() =
+    fun returns_parsed_result_and_loads_with_vision_and_one_image() =
         runTest {
             setupReadyModel()
-            val raw = """{"type":"EVENT","title":"치과","datetime_iso":"2026-05-23T15:00:00"}"""
-            val useCase = ClassifyCaptureUseCaseImpl(FakeEngine(raw), fileStore, prefs)
-            val r = useCase("내일 3시 치과")
+            val raw = """{"type":"EVENT","title":"회의","datetime_iso":"2026-06-10T15:00:00"}"""
+            val engine = FakeEngine(raw)
+            val useCase = ClassifyImageCaptureUseCaseImpl(engine, fileStore, prefs)
+            val r = useCase(byteArrayOf(1, 2, 3), "다음주 회의")
             assertNotNull(r)
-            assertEquals("치과", r!!.title)
+            assertEquals("회의", r!!.title)
+            assertEquals(1, engine.lastImageCount)
+            assertTrue("이미지 분류는 enableVision=true 로 로드해야 함", engine.lastConfig!!.enableVision)
         }
 
     @Test
     fun returns_null_when_no_variant_selected() =
         runTest {
-            val useCase = ClassifyCaptureUseCaseImpl(FakeEngine("{}"), fileStore, prefs)
-            assertNull(useCase("hi"))
+            val useCase = ClassifyImageCaptureUseCaseImpl(FakeEngine("{}"), fileStore, prefs)
+            assertNull(useCase(byteArrayOf(1), null))
         }
 
     @Test
     fun returns_null_when_model_file_missing() =
         runTest {
             prefs.setSelectedVariant("v1")
-            val useCase = ClassifyCaptureUseCaseImpl(FakeEngine("{}"), fileStore, prefs)
-            assertNull(useCase("hi"))
+            val useCase = ClassifyImageCaptureUseCaseImpl(FakeEngine("{}"), fileStore, prefs)
+            assertNull(useCase(byteArrayOf(1), null))
         }
 
     @Test
     fun returns_null_when_inference_throws() =
         runTest {
             setupReadyModel()
-            val engine = FakeEngine("{}", shouldThrow = true)
-            val useCase = ClassifyCaptureUseCaseImpl(engine, fileStore, prefs)
-            assertNull(useCase("hi"))
-        }
-
-    @Test
-    fun returns_null_when_response_not_json() =
-        runTest {
-            setupReadyModel()
-            val useCase = ClassifyCaptureUseCaseImpl(FakeEngine("그냥 잡담"), fileStore, prefs)
-            assertNull(useCase("hi"))
-        }
-
-    @Test
-    fun loads_engine_only_once_across_calls() =
-        runTest {
-            setupReadyModel()
-            val engine = FakeEngine("""{"type":"MEMO","title":"t","body":""}""")
-            val useCase = ClassifyCaptureUseCaseImpl(engine, fileStore, prefs)
-            repeat(3) { useCase("hi") }
-            assertEquals(1, engine.loadCount)
+            val useCase = ClassifyImageCaptureUseCaseImpl(FakeEngine("{}", shouldThrow = true), fileStore, prefs)
+            assertNull(useCase(byteArrayOf(1), null))
         }
 }

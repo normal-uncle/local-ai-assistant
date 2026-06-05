@@ -1,8 +1,13 @@
 package com.just.feature.capture.capture
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,13 +34,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.just.assistant.repository.model.NoteType
 import com.just.feature.capture.PreviewSheet
 import com.just.feature.capture.R
 import com.just.feature.capture.permission.SchedulePermissionState
 import com.just.feature.capture.permission.rememberSchedulePermissionState
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,6 +52,31 @@ internal fun CaptureScreen(
     viewModel: CaptureViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val imageFallbackTitle = stringResource(R.string.capture_image_fallback_title)
+    val cameraDeniedMessage = stringResource(R.string.capture_camera_denied_banner)
+    var cameraOutputUri by remember { mutableStateOf<Uri?>(null) }
+
+    val galleryLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) viewModel.onImagePicked(uri)
+        }
+    val cameraLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success) cameraOutputUri?.let(viewModel::onImagePicked)
+        }
+    val cameraPermissionLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                val file = File(context.cacheDir, "camera_${System.currentTimeMillis()}.jpg")
+                val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                cameraOutputUri = uri
+                cameraLauncher.launch(uri)
+            } else {
+                android.widget.Toast.makeText(context, cameraDeniedMessage, android.widget.Toast.LENGTH_SHORT).show()
+            }
+        }
 
     val permissionState = rememberSchedulePermissionState()
     var pendingToggleType by remember { mutableStateOf<NoteType?>(null) }
@@ -112,13 +145,33 @@ internal fun CaptureScreen(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .weight(1f)
                             .testTag("capture_input"),
                 )
                 Spacer(Modifier.height(12.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Button(onClick = {
+                        galleryLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
+                        )
+                    }) { Text(stringResource(R.string.capture_pick_gallery)) }
+                    Button(onClick = {
+                        cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+                    }) { Text(stringResource(R.string.capture_take_photo)) }
+                }
+                state.pickedImage?.let { uri ->
+                    Spacer(Modifier.height(8.dp))
+                    AsyncImage(
+                        model = uri,
+                        contentDescription = stringResource(R.string.capture_image_thumbnail_desc),
+                        modifier = Modifier.fillMaxWidth().height(160.dp).testTag("capture_thumbnail"),
+                    )
+                }
+                Spacer(Modifier.height(12.dp))
                 Button(
-                    onClick = viewModel::onPrepare,
-                    enabled = state.input.isNotBlank() && !state.isSaving && !state.isPreparing,
+                    onClick = {
+                        if (state.pickedImage != null) viewModel.onPrepareImage(imageFallbackTitle) else viewModel.onPrepare()
+                    },
+                    enabled = (state.input.isNotBlank() || state.pickedImage != null) && !state.isSaving && !state.isPreparing,
                     modifier = Modifier.testTag("capture_prepare"),
                 ) { Text(stringResource(R.string.capture_prepare)) }
                 if (state.isPreparing) {

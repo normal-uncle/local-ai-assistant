@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.just.assistant.repository.model.NoteType
 import com.just.feature.capture.capture.CapturePreview
 import java.time.Instant
@@ -66,6 +67,15 @@ fun PreviewSheet(
             style = MaterialTheme.typography.titleMedium,
         )
         Spacer(Modifier.height(12.dp))
+
+        preview.imageUri?.let { uri ->
+            AsyncImage(
+                model = uri,
+                contentDescription = null,
+                modifier = Modifier.fillMaxWidth().height(160.dp),
+            )
+            Spacer(Modifier.height(12.dp))
+        }
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             NoteType.entries.forEach { t ->

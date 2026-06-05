@@ -30,4 +30,9 @@
     <string name="capture_permission_exact_alarm_body">"알람 설정" 기능을 사용하려면 시스템 설정에서 "알람 및 리마인더"를 허용해주세요.</string>
     <string name="capture_permission_settings_button">설정 열기</string>
     <string name="capture_permission_cancel">취소</string>
+    <string name="capture_pick_gallery">갤러리</string>
+    <string name="capture_take_photo">카메라</string>
+    <string name="capture_image_thumbnail_desc">선택한 이미지 미리보기</string>
+    <string name="capture_image_fallback_title">사진 메모</string>
+    <string name="capture_camera_denied_banner">카메라 권한이 없어 갤러리만 사용할 수 있습니다</string>
 </resources>

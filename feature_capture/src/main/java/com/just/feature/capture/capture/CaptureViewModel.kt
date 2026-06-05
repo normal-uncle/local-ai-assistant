@@ -1,12 +1,15 @@
 package com.just.feature.capture.capture
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.just.assistant.local.image.ImageStore
 import com.just.assistant.repository.model.Note
 import com.just.assistant.repository.model.NoteType
 import com.just.assistant.repository.model.ScheduleEventInput
 import com.just.assistant.repository.model.ScheduleReminderInput
 import com.just.assistant.usecase.capture.di.ClassifyCaptureUseCase
+import com.just.assistant.usecase.capture.di.ClassifyImageCaptureUseCase
 import com.just.assistant.usecase.note.di.SaveNoteUseCase
 import com.just.assistant.usecase.schedule.di.ScheduleEventUseCase
 import com.just.assistant.usecase.schedule.di.ScheduleReminderUseCase
@@ -26,10 +29,12 @@ data class CapturePreview(
     val type: NoteType,
     val tags: List<String> = emptyList(),
     val datetime: Instant? = null,
+    val imageUri: Uri? = null,
 )
 
 data class CaptureState(
     val input: String = "",
+    val pickedImage: Uri? = null,
     val preview: CapturePreview? = null,
     val isPreparing: Boolean = false,
     val isSaving: Boolean = false,
@@ -44,6 +49,8 @@ class CaptureViewModel
         private val classify: ClassifyCaptureUseCase,
         private val scheduleEvent: ScheduleEventUseCase,
         private val scheduleReminder: ScheduleReminderUseCase,
+        private val classifyImage: ClassifyImageCaptureUseCase,
+        private val imageStore: ImageStore,
     ) : ViewModel() {
         private val _state = MutableStateFlow(CaptureState())
         val state: StateFlow<CaptureState> get() = _state.asStateFlow()
@@ -76,6 +83,45 @@ class CaptureViewModel
             }
         }
 
+        fun onImagePicked(uri: Uri?) {
+            _state.update { it.copy(pickedImage = uri) }
+        }
+
+        /** [fallbackTitle]은 UI 레이어(stringResource)에서 주입 — VM에 UI 문자열을 하드코딩하지 않기 위함. */
+        fun onPrepareImage(fallbackTitle: String) {
+            val uri = _state.value.pickedImage ?: return
+            if (_state.value.isPreparing) return
+            _state.update { it.copy(isPreparing = true) }
+            viewModelScope.launch {
+                val preview =
+                    try {
+                        val bytes = imageStore.toClassifierBytes(uri)
+                        val caption = _state.value.input.trim().ifEmpty { null }
+                        val aiResult = classifyImage(bytes, caption)
+                        if (aiResult != null) {
+                            CapturePreview(
+                                title = aiResult.title,
+                                body = aiResult.body,
+                                type = aiResult.type,
+                                tags = aiResult.tags,
+                                datetime = aiResult.datetimeIso?.let { runCatching { Instant.parse(it) }.getOrNull() },
+                                imageUri = uri,
+                            )
+                        } else {
+                            CapturePreview(
+                                title = _state.value.input.trim().ifEmpty { fallbackTitle },
+                                body = "",
+                                type = NoteType.MEMO,
+                                imageUri = uri,
+                            )
+                        }
+                    } catch (t: Throwable) {
+                        CapturePreview(title = fallbackTitle, body = "", type = NoteType.MEMO, imageUri = uri)
+                    }
+                _state.update { it.copy(preview = preview, isPreparing = false) }
+            }
+        }
+
         fun onCancel() {
             _state.update { it.copy(preview = null) }
         }
@@ -86,6 +132,10 @@ class CaptureViewModel
             _state.update { it.copy(isSaving = true) }
             viewModelScope.launch {
                 val now = Instant.now()
+                val persistedImageUri =
+                    _state.value.pickedImage?.let {
+                        runCatching { imageStore.persist(it).toString() }.getOrNull()
+                    }
                 try {
                     val initialNote =
                         Note(
@@ -98,6 +148,7 @@ class CaptureViewModel
                             updatedAt = now,
                             calendarEventId = null,
                             alarmRequestId = null,
+                            imageUri = persistedImageUri,
                         )
                     val newId = saveNote(initialNote)
 
