@@ -3,7 +3,9 @@ package com.just.assistant.usecase
 import com.just.assistant.local.alarm.AlarmCompleteAction
 import com.just.assistant.local.alarm.AlarmSnoozeAction
 import com.just.assistant.usecase.capture.di.ClassifyCaptureUseCase
+import com.just.assistant.usecase.capture.di.ClassifyImageCaptureUseCase
 import com.just.assistant.usecase.capture.impl.ClassifyCaptureUseCaseImpl
+import com.just.assistant.usecase.capture.impl.ClassifyImageCaptureUseCaseImpl
 import com.just.assistant.usecase.model.di.EnsureModelDownloadedUseCase
 import com.just.assistant.usecase.model.di.ObserveModelDownloadProgressUseCase
 import com.just.assistant.usecase.model.di.ObserveModelStatusUseCase
@@ -65,6 +67,9 @@ abstract class UseCaseModule {
 
     @Binds
     abstract fun bindClassifyCaptureUseCase(impl: ClassifyCaptureUseCaseImpl): ClassifyCaptureUseCase
+
+    @Binds
+    abstract fun bindClassifyImageCaptureUseCase(impl: ClassifyImageCaptureUseCaseImpl): ClassifyImageCaptureUseCase
 
     @Binds
     abstract fun bindScheduleEventUseCase(impl: ScheduleEventUseCaseImpl): ScheduleEventUseCase
