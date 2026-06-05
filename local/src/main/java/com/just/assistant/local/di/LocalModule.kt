@@ -3,6 +3,8 @@ package com.just.assistant.local.di
 import android.content.Context
 import androidx.room.Room
 import com.just.assistant.local.AssistantDatabase
+import com.just.assistant.local.image.ImageStore
+import com.just.assistant.local.image.ImageStoreImpl
 import com.just.assistant.local.note.NoteDao
 import com.just.assistant.local.pref.UserPreferences
 import dagger.Module
@@ -28,6 +30,10 @@ object LocalModule {
                 AssistantDatabase.MIGRATION_3_4,
             )
             .build()
+
+    @Provides
+    @Singleton
+    fun provideImageStore(impl: ImageStoreImpl): ImageStore = impl
 
     @Provides
     fun provideNoteDao(db: AssistantDatabase): NoteDao = db.noteDao()
