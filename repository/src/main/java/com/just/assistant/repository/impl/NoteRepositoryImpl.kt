@@ -52,6 +52,7 @@ class NoteRepositoryImpl
                 calendarEventId = calendarEventId,
                 alarmRequestId = alarmRequestId,
                 isCompleted = isCompleted,
+                imageUri = imageUri,
             )
 
         private fun Note.toEntity(): NoteEntity =
@@ -67,5 +68,6 @@ class NoteRepositoryImpl
                 calendarEventId = calendarEventId,
                 alarmRequestId = alarmRequestId,
                 isCompleted = isCompleted,
+                imageUri = imageUri,
             )
     }
