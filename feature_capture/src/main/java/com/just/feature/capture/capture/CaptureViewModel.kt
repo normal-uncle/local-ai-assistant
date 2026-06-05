@@ -87,7 +87,8 @@ class CaptureViewModel
             _state.update { it.copy(pickedImage = uri) }
         }
 
-        fun onPrepareImage() {
+        /** [fallbackTitle]은 UI 레이어(stringResource)에서 주입 — VM에 UI 문자열을 하드코딩하지 않기 위함. */
+        fun onPrepareImage(fallbackTitle: String) {
             val uri = _state.value.pickedImage ?: return
             if (_state.value.isPreparing) return
             _state.update { it.copy(isPreparing = true) }
@@ -108,14 +109,14 @@ class CaptureViewModel
                             )
                         } else {
                             CapturePreview(
-                                title = _state.value.input.trim().ifEmpty { "사진 메모" },
+                                title = _state.value.input.trim().ifEmpty { fallbackTitle },
                                 body = "",
                                 type = NoteType.MEMO,
                                 imageUri = uri,
                             )
                         }
                     } catch (t: Throwable) {
-                        CapturePreview(title = "사진 메모", body = "", type = NoteType.MEMO, imageUri = uri)
+                        CapturePreview(title = fallbackTitle, body = "", type = NoteType.MEMO, imageUri = uri)
                     }
                 _state.update { it.copy(preview = preview, isPreparing = false) }
             }

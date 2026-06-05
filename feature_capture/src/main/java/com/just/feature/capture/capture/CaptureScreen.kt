@@ -54,6 +54,8 @@ internal fun CaptureScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val context = androidx.compose.ui.platform.LocalContext.current
+    val imageFallbackTitle = stringResource(R.string.capture_image_fallback_title)
+    val cameraDeniedMessage = stringResource(R.string.capture_camera_denied_banner)
     var cameraOutputUri by remember { mutableStateOf<Uri?>(null) }
 
     val galleryLauncher =
@@ -71,6 +73,8 @@ internal fun CaptureScreen(
                 val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
                 cameraOutputUri = uri
                 cameraLauncher.launch(uri)
+            } else {
+                android.widget.Toast.makeText(context, cameraDeniedMessage, android.widget.Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -165,7 +169,7 @@ internal fun CaptureScreen(
                 Spacer(Modifier.height(12.dp))
                 Button(
                     onClick = {
-                        if (state.pickedImage != null) viewModel.onPrepareImage() else viewModel.onPrepare()
+                        if (state.pickedImage != null) viewModel.onPrepareImage(imageFallbackTitle) else viewModel.onPrepare()
                     },
                     enabled = (state.input.isNotBlank() || state.pickedImage != null) && !state.isSaving && !state.isPreparing,
                     modifier = Modifier.testTag("capture_prepare"),
