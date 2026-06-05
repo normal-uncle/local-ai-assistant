@@ -16,4 +16,5 @@ data class NoteEntity(
     val calendarEventId: Long? = null,
     val alarmRequestId: Int? = null,
     val isCompleted: Boolean = false,
+    val imageUri: String? = null,
 )

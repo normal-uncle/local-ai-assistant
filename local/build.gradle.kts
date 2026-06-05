@@ -17,6 +17,12 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
+    sourceSets {
+        getByName("androidTest") {
+            assets.srcDir("$projectDir/schemas")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false

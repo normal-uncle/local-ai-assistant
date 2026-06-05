@@ -25,6 +25,7 @@ object LocalModule {
             .addMigrations(
                 AssistantDatabase.MIGRATION_1_2,
                 AssistantDatabase.MIGRATION_2_3,
+                AssistantDatabase.MIGRATION_3_4,
             )
             .build()
 

@@ -58,4 +58,22 @@ class MigrationTest {
             assertEquals(0, c.getInt(0))
         }
     }
+
+    @Test
+    fun migrate_3_to_4_adds_imageUri_column_nullable() {
+        val dbName = "migration-34-test-${System.currentTimeMillis()}"
+        helper.createDatabase(dbName, 3).use { db ->
+            db.execSQL(
+                """
+                INSERT INTO notes (id, title, body, type, tags, datetimeIso, createdAtEpochMs, updatedAtEpochMs, calendarEventId, alarmRequestId, isCompleted)
+                VALUES (1, 't', 'b', 'MEMO', '', NULL, 100, 100, NULL, NULL, 0)
+                """.trimIndent(),
+            )
+        }
+        val migratedDb = helper.runMigrationsAndValidate(dbName, 4, true, AssistantDatabase.MIGRATION_3_4)
+        migratedDb.query("SELECT imageUri FROM notes WHERE id = 1").use { c ->
+            assertEquals(true, c.moveToFirst())
+            assertEquals(true, c.isNull(0))
+        }
+    }
 }
