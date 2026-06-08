@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">설정</string>
+    <string name="settings_briefing_label">아침 브리핑</string>
+    <string name="settings_briefing_desc">매일 오전 8시에 오늘 일정을 알림으로 받습니다</string>
+</resources>
