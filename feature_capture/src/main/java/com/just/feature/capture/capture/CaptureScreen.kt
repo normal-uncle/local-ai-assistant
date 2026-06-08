@@ -1,6 +1,8 @@
 package com.just.feature.capture.capture
 
+import android.content.Intent
 import android.net.Uri
+import android.speech.RecognizerIntent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -75,6 +77,21 @@ internal fun CaptureScreen(
                 cameraLauncher.launch(uri)
             } else {
                 android.widget.Toast.makeText(context, cameraDeniedMessage, android.widget.Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    val voiceUnavailable = stringResource(R.string.capture_voice_unavailable)
+    val voicePrompt = stringResource(R.string.capture_voice_prompt)
+    val speechLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val transcript =
+                result.data
+                    ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                    ?.firstOrNull()
+                    ?.trim()
+            if (!transcript.isNullOrEmpty()) {
+                val current = state.input.trim()
+                viewModel.onInputChanged(if (current.isEmpty()) transcript else "$current $transcript")
             }
         }
 
@@ -157,6 +174,23 @@ internal fun CaptureScreen(
                     Button(onClick = {
                         cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
                     }) { Text(stringResource(R.string.capture_take_photo)) }
+                    Button(onClick = {
+                        val intent =
+                            Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                                putExtra(
+                                    RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM,
+                                )
+                                putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true)
+                                putExtra(RecognizerIntent.EXTRA_LANGUAGE, java.util.Locale.getDefault())
+                                putExtra(RecognizerIntent.EXTRA_PROMPT, voicePrompt)
+                            }
+                        try {
+                            speechLauncher.launch(intent)
+                        } catch (e: android.content.ActivityNotFoundException) {
+                            android.widget.Toast.makeText(context, voiceUnavailable, android.widget.Toast.LENGTH_SHORT).show()
+                        }
+                    }) { Text(stringResource(R.string.capture_voice_input)) }
                 }
                 state.pickedImage?.let { uri ->
                     Spacer(Modifier.height(8.dp))
