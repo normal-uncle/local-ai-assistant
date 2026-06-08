@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.just.assistant.ai.inference.ChatSession
 import com.just.assistant.local.audio.TtsSpeaker
+import com.just.assistant.usecase.chat.di.RetrieveNoteContextUseCase
 import com.just.assistant.usecase.chat.di.StartChatSessionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -33,6 +34,7 @@ class ChatViewModel
     constructor(
         private val startChatSession: StartChatSessionUseCase,
         private val tts: TtsSpeaker,
+        private val retrieveNoteContext: RetrieveNoteContextUseCase,
     ) : ViewModel() {
         private val _state = MutableStateFlow(ChatState())
         val state: StateFlow<ChatState> get() = _state.asStateFlow()
@@ -65,10 +67,17 @@ class ChatViewModel
                         modelReady = true,
                     )
                 }
+                val context = runCatching { retrieveNoteContext(text) }.getOrDefault("")
+                val augmented =
+                    if (context.isBlank()) {
+                        text
+                    } else {
+                        "[참고 정보 — 사용자의 저장된 메모·일정]\n$context\n\n[질문]\n$text"
+                    }
                 streamJob =
                     launch {
                         try {
-                            s.send(text).collect { delta ->
+                            s.send(augmented).collect { delta ->
                                 _state.update { st ->
                                     val msgs = st.messages.toMutableList()
                                     val last = msgs.lastIndex

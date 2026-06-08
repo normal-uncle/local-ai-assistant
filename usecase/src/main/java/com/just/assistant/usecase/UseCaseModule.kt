@@ -6,7 +6,9 @@ import com.just.assistant.usecase.capture.di.ClassifyCaptureUseCase
 import com.just.assistant.usecase.capture.di.ClassifyImageCaptureUseCase
 import com.just.assistant.usecase.capture.impl.ClassifyCaptureUseCaseImpl
 import com.just.assistant.usecase.capture.impl.ClassifyImageCaptureUseCaseImpl
+import com.just.assistant.usecase.chat.di.RetrieveNoteContextUseCase
 import com.just.assistant.usecase.chat.di.StartChatSessionUseCase
+import com.just.assistant.usecase.chat.impl.RetrieveNoteContextUseCaseImpl
 import com.just.assistant.usecase.chat.impl.StartChatSessionUseCaseImpl
 import com.just.assistant.usecase.model.di.EnsureModelDownloadedUseCase
 import com.just.assistant.usecase.model.di.ObserveModelDownloadProgressUseCase
@@ -96,6 +98,9 @@ abstract class UseCaseModule {
 
     @Binds
     abstract fun bindStartChatSessionUseCase(impl: StartChatSessionUseCaseImpl): StartChatSessionUseCase
+
+    @Binds
+    abstract fun bindRetrieveNoteContextUseCase(impl: RetrieveNoteContextUseCaseImpl): RetrieveNoteContextUseCase
 
     @Binds
     abstract fun bindAlarmCompleteAction(impl: CompleteScheduledNoteUseCaseImpl): AlarmCompleteAction
