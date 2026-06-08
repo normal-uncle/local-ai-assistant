@@ -5,12 +5,16 @@ import android.util.Log
 import com.google.ai.edge.litertlm.Backend
 import com.google.ai.edge.litertlm.Content
 import com.google.ai.edge.litertlm.Contents
+import com.google.ai.edge.litertlm.Conversation
 import com.google.ai.edge.litertlm.ConversationConfig
 import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.EngineConfig
 import com.google.ai.edge.litertlm.SamplerConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
@@ -112,6 +116,44 @@ class LiteRtLmInferenceEngine
         }
 
         override fun isReady(): Boolean = engine != null
+
+        override fun startChat(): ChatSession {
+            val e = engine ?: error("InferenceEngine not loaded; call load() first")
+            val cfg = currentConfig ?: error("InferenceEngine not loaded; call load() first")
+            val samplerConfig =
+                SamplerConfig(
+                    topK = cfg.topK,
+                    topP = cfg.topP.toDouble(),
+                    temperature = cfg.temperature.toDouble(),
+                    seed = 0,
+                )
+            val conversation =
+                e.createConversation(
+                    ConversationConfig(
+                        systemInstruction = null,
+                        initialMessages = emptyList(),
+                        tools = emptyList(),
+                        samplerConfig = samplerConfig,
+                    ),
+                )
+            return LiteRtLmChatSession(conversation)
+        }
+
+        private class LiteRtLmChatSession(
+            private val conversation: Conversation,
+        ) : ChatSession {
+            override fun send(message: String): Flow<String> =
+                conversation
+                    .sendMessageAsync(message)
+                    .map { msg ->
+                        msg.contents.contents
+                            .filterIsInstance<Content.Text>()
+                            .joinToString(separator = "") { it.text }
+                    }
+                    .flowOn(Dispatchers.IO)
+
+            override fun close() = conversation.close()
+        }
 
         override suspend fun generate(
             prompt: String,

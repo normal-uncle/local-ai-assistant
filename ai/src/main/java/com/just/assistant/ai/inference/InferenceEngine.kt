@@ -31,6 +31,12 @@ interface InferenceEngine {
     suspend fun generate(prompt: String, images: List<ByteArray>): String
 
     /**
+     * 멀티턴 채팅 세션 시작. 호출 전 [load] 필요.
+     * 기본 구현은 미지원 throw — 채팅 지원 엔진(LiteRtLm)만 override.
+     */
+    fun startChat(): ChatSession = throw UnsupportedOperationException("chat not supported")
+
+    /**
      * 마지막 [load] 호출에서 실제 사용된 backend 식별자. 로드 전이면 null.
      * 회귀 리포트 등 진단 용도.
      */
