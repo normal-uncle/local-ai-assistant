@@ -16,6 +16,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -25,9 +26,16 @@ class ChatViewModelTest {
     private class FakeSession(private val deltas: List<String>) : ChatSession {
         var closed = false
         var sendCount = 0
+        var lastSent: String? = null
         override fun send(message: String): Flow<String> =
-            flow { sendCount++; deltas.forEach { emit(it) } }
+            flow { sendCount++; lastSent = message; deltas.forEach { emit(it) } }
         override fun close() { closed = true }
+    }
+
+    private class FakeRetriever(private val context: String = "") :
+        com.just.assistant.usecase.chat.di.RetrieveNoteContextUseCase {
+        var lastQuery: String? = null
+        override suspend fun invoke(query: String): String { lastQuery = query; return context }
     }
 
     private class FakeStart(private val session: ChatSession?) : StartChatSessionUseCase {
@@ -50,7 +58,7 @@ class ChatViewModelTest {
     fun send_appends_streaming_deltas_to_assistant_message() =
         runTest {
             val session = FakeSession(listOf("안", "녕", "하세요"))
-            val vm = ChatViewModel(FakeStart(session), FakeTts())
+            val vm = ChatViewModel(FakeStart(session), FakeTts(), FakeRetriever())
             vm.onInputChanged("안녕")
             vm.onSend()
             advanceUntilIdle()
@@ -68,7 +76,7 @@ class ChatViewModelTest {
         runTest {
             val session = FakeSession(listOf("a"))
             val start = FakeStart(session)
-            val vm = ChatViewModel(start, FakeTts())
+            val vm = ChatViewModel(start, FakeTts(), FakeRetriever())
             vm.onInputChanged("hi"); vm.onSend(); advanceUntilIdle()
             vm.onInputChanged("again"); vm.onSend(); advanceUntilIdle()
             assertEquals(1, start.count)
@@ -78,7 +86,7 @@ class ChatViewModelTest {
     @Test
     fun model_not_ready_sets_flag() =
         runTest {
-            val vm = ChatViewModel(FakeStart(null), FakeTts())
+            val vm = ChatViewModel(FakeStart(null), FakeTts(), FakeRetriever())
             vm.onInputChanged("hi")
             vm.onSend()
             advanceUntilIdle()
@@ -93,7 +101,7 @@ class ChatViewModelTest {
                     override fun send(message: String): Flow<String> = flow { throw RuntimeException("4096") }
                     override fun close() {}
                 }
-            val vm = ChatViewModel(FakeStart(failing), FakeTts())
+            val vm = ChatViewModel(FakeStart(failing), FakeTts(), FakeRetriever())
             vm.onInputChanged("hi")
             vm.onSend()
             advanceUntilIdle()
@@ -107,7 +115,7 @@ class ChatViewModelTest {
         runTest {
             val session = FakeSession(listOf("안", "녕"))
             val tts = FakeTts()
-            val vm = ChatViewModel(FakeStart(session), tts)
+            val vm = ChatViewModel(FakeStart(session), tts, FakeRetriever())
             vm.onToggleTts()
             vm.onInputChanged("hi")
             vm.onSend()
@@ -120,7 +128,7 @@ class ChatViewModelTest {
     fun does_not_speak_when_tts_disabled() =
         runTest {
             val tts = FakeTts()
-            val vm = ChatViewModel(FakeStart(FakeSession(listOf("a"))), tts)
+            val vm = ChatViewModel(FakeStart(FakeSession(listOf("a"))), tts, FakeRetriever())
             vm.onInputChanged("hi")
             vm.onSend()
             advanceUntilIdle()
@@ -131,7 +139,7 @@ class ChatViewModelTest {
     fun onSend_stops_previous_speech() =
         runTest {
             val tts = FakeTts()
-            val vm = ChatViewModel(FakeStart(FakeSession(listOf("a"))), tts)
+            val vm = ChatViewModel(FakeStart(FakeSession(listOf("a"))), tts, FakeRetriever())
             vm.onInputChanged("hi")
             vm.onSend()
             advanceUntilIdle()
@@ -142,10 +150,35 @@ class ChatViewModelTest {
     fun toggle_off_stops_speech() =
         runTest {
             val tts = FakeTts()
-            val vm = ChatViewModel(FakeStart(FakeSession(listOf("a"))), tts)
+            val vm = ChatViewModel(FakeStart(FakeSession(listOf("a"))), tts, FakeRetriever())
             vm.onToggleTts()
             vm.onToggleTts()
             assertEquals(true, tts.stopCount >= 1)
             assertEquals(false, vm.state.first().ttsEnabled)
+        }
+
+    @Test
+    fun injects_context_into_sent_message_but_shows_original_in_bubble() =
+        runTest {
+            val session = FakeSession(listOf("ok"))
+            val vm = ChatViewModel(FakeStart(session), FakeTts(), FakeRetriever("- [일정] 치과 (2026-06-09 15:00)"))
+            vm.onInputChanged("내일 일정 뭐 있어?")
+            vm.onSend()
+            advanceUntilIdle()
+            assertTrue(session.lastSent!!.contains("치과"))
+            assertTrue(session.lastSent!!.contains("내일 일정 뭐 있어?"))
+            val userMsg = vm.state.first().messages.first { it.role == ChatMessage.Role.USER }
+            assertEquals("내일 일정 뭐 있어?", userMsg.text)
+        }
+
+    @Test
+    fun sends_original_when_no_context() =
+        runTest {
+            val session = FakeSession(listOf("ok"))
+            val vm = ChatViewModel(FakeStart(session), FakeTts(), FakeRetriever(""))
+            vm.onInputChanged("안녕")
+            vm.onSend()
+            advanceUntilIdle()
+            assertEquals("안녕", session.lastSent)
         }
 }
