@@ -58,6 +58,7 @@ class ChatViewModel
                         input = "",
                         isStreaming = true,
                         error = null,
+                        modelReady = true,
                     )
                 }
                 streamJob =
