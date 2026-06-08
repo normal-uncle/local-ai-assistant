@@ -3,6 +3,7 @@ package com.just.feature.chat.chat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.just.assistant.ai.inference.ChatSession
+import com.just.assistant.local.audio.TtsSpeaker
 import com.just.assistant.usecase.chat.di.StartChatSessionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -23,6 +24,7 @@ data class ChatState(
     val isStreaming: Boolean = false,
     val error: String? = null,
     val modelReady: Boolean = true,
+    val ttsEnabled: Boolean = false,
 )
 
 @HiltViewModel
@@ -30,6 +32,7 @@ class ChatViewModel
     @Inject
     constructor(
         private val startChatSession: StartChatSessionUseCase,
+        private val tts: TtsSpeaker,
     ) : ViewModel() {
         private val _state = MutableStateFlow(ChatState())
         val state: StateFlow<ChatState> get() = _state.asStateFlow()
@@ -50,6 +53,7 @@ class ChatViewModel
                     _state.update { it.copy(modelReady = false) }
                     return@launch
                 }
+                tts.stop()
                 _state.update {
                     it.copy(
                         messages = it.messages +
@@ -72,6 +76,10 @@ class ChatViewModel
                                     st.copy(messages = msgs)
                                 }
                             }
+                            if (_state.value.ttsEnabled) {
+                                val finalText = _state.value.messages.lastOrNull()?.text.orEmpty()
+                                if (finalText.isNotBlank()) tts.speak(finalText)
+                            }
                         } catch (t: Throwable) {
                             session?.close()
                             session = null
@@ -86,17 +94,26 @@ class ChatViewModel
 
         fun onCancel() {
             streamJob?.cancel()
+            tts.stop()
             _state.update { it.copy(isStreaming = false) }
         }
 
         fun onResetConversation() {
             streamJob?.cancel()
+            tts.stop()
             session?.close()
             session = null
             _state.update { ChatState() }
         }
 
+        fun onToggleTts() {
+            val newValue = !_state.value.ttsEnabled
+            if (!newValue) tts.stop()
+            _state.update { it.copy(ttsEnabled = newValue) }
+        }
+
         override fun onCleared() {
+            tts.stop()
             session?.close()
         }
     }

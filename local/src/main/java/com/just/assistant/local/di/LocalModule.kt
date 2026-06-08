@@ -3,6 +3,8 @@ package com.just.assistant.local.di
 import android.content.Context
 import androidx.room.Room
 import com.just.assistant.local.AssistantDatabase
+import com.just.assistant.local.audio.TtsSpeaker
+import com.just.assistant.local.audio.TtsSpeakerImpl
 import com.just.assistant.local.image.ImageStore
 import com.just.assistant.local.image.ImageStoreImpl
 import com.just.assistant.local.note.NoteDao
@@ -34,6 +36,10 @@ object LocalModule {
     @Provides
     @Singleton
     fun provideImageStore(impl: ImageStoreImpl): ImageStore = impl
+
+    @Provides
+    @Singleton
+    fun provideTtsSpeaker(impl: TtsSpeakerImpl): TtsSpeaker = impl
 
     @Provides
     fun provideNoteDao(db: AssistantDatabase): NoteDao = db.noteDao()

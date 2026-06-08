@@ -28,6 +28,7 @@ dependencies {
     implementation(project(":ui_component"))
     implementation(project(":usecase"))
     implementation(project(":ai"))
+    implementation(project(":local"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
