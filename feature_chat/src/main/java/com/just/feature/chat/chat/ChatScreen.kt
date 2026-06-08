@@ -1,5 +1,10 @@
 package com.just.feature.chat.chat
 
+import android.content.Intent
+import android.speech.RecognizerIntent
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,6 +40,21 @@ internal fun ChatScreen(
     viewModel: ChatViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val voiceUnavailable = stringResource(R.string.chat_voice_unavailable)
+    val voicePrompt = stringResource(R.string.chat_voice_prompt)
+    val speechLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val transcript =
+                result.data
+                    ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                    ?.firstOrNull()
+                    ?.trim()
+            if (!transcript.isNullOrEmpty()) {
+                val current = state.input.trim()
+                viewModel.onInputChanged(if (current.isEmpty()) transcript else "$current $transcript")
+            }
+        }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -91,6 +112,25 @@ internal fun ChatScreen(
                     modifier = Modifier.weight(1f),
                     placeholder = { Text(stringResource(R.string.chat_input_hint)) },
                 )
+                if (!state.isStreaming) {
+                    Button(onClick = {
+                        val intent =
+                            Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                                putExtra(
+                                    RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM,
+                                )
+                                putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true)
+                                putExtra(RecognizerIntent.EXTRA_LANGUAGE, java.util.Locale.getDefault())
+                                putExtra(RecognizerIntent.EXTRA_PROMPT, voicePrompt)
+                            }
+                        try {
+                            speechLauncher.launch(intent)
+                        } catch (e: android.content.ActivityNotFoundException) {
+                            Toast.makeText(context, voiceUnavailable, Toast.LENGTH_SHORT).show()
+                        }
+                    }) { Text(stringResource(R.string.chat_voice_input)) }
+                }
                 if (state.isStreaming) {
                     Button(onClick = viewModel::onCancel) {
                         Text(stringResource(R.string.chat_cancel))
