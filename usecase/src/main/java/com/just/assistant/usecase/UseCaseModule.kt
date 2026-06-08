@@ -2,6 +2,8 @@ package com.just.assistant.usecase
 
 import com.just.assistant.local.alarm.AlarmCompleteAction
 import com.just.assistant.local.alarm.AlarmSnoozeAction
+import com.just.assistant.usecase.briefing.di.BuildDailyBriefingUseCase
+import com.just.assistant.usecase.briefing.impl.BuildDailyBriefingUseCaseImpl
 import com.just.assistant.usecase.capture.di.ClassifyCaptureUseCase
 import com.just.assistant.usecase.capture.di.ClassifyImageCaptureUseCase
 import com.just.assistant.usecase.capture.impl.ClassifyCaptureUseCaseImpl
@@ -101,6 +103,9 @@ abstract class UseCaseModule {
 
     @Binds
     abstract fun bindRetrieveNoteContextUseCase(impl: RetrieveNoteContextUseCaseImpl): RetrieveNoteContextUseCase
+
+    @Binds
+    abstract fun bindBuildDailyBriefingUseCase(impl: BuildDailyBriefingUseCaseImpl): BuildDailyBriefingUseCase
 
     @Binds
     abstract fun bindAlarmCompleteAction(impl: CompleteScheduledNoteUseCaseImpl): AlarmCompleteAction

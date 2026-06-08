@@ -3,4 +3,7 @@
     <string name="notification_channel_reminders">리마인더</string>
     <string name="notification_action_done">완료</string>
     <string name="notification_action_snooze">5분 뒤</string>
+    <string name="notification_channel_briefing">아침 브리핑</string>
+    <string name="briefing_title">오늘 일정 %1$d건</string>
+    <string name="briefing_more">…외 %1$d건</string>
 </resources>

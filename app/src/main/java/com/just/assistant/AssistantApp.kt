@@ -19,6 +19,7 @@ import com.just.feature.capture.CaptureScene
 import com.just.feature.chat.ChatScene
 import com.just.feature.memo.MemoScene
 import com.just.feature.onboarding.OnboardingScene
+import com.just.feature.settings.SettingsScene
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -74,6 +75,7 @@ fun AssistantApp() {
                             CaptureScene(
                                 onOpenMemo = { backStack.add(AssistantRoute.Memo) },
                                 onOpenChat = { backStack.add(AssistantRoute.Chat) },
+                                onOpenSettings = { backStack.add(AssistantRoute.Settings) },
                             )
                         }
                         entry<AssistantRoute.Memo> {
@@ -90,6 +92,9 @@ fun AssistantApp() {
                         }
                         entry<AssistantRoute.Chat> {
                             ChatScene(onBack = { backStack.removeLastOrNull() })
+                        }
+                        entry<AssistantRoute.Settings> {
+                            SettingsScene(onBack = { backStack.removeLastOrNull() })
                         }
                     },
             )

@@ -41,6 +41,7 @@ dependencies {
     implementation(project(":feature_capture"))
     implementation(project(":feature_chat"))
     implementation(project(":feature_memo"))
+    implementation(project(":feature_settings"))
     implementation(project(":remote"))
     implementation(project(":feature_onboarding"))
     implementation(project(":usecase"))
@@ -66,10 +67,15 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
 
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
+
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     testImplementation(libs.junit)
+    testImplementation(libs.androidx.work.testing)
     androidTestImplementation(project(":ai"))
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

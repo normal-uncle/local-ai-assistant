@@ -52,6 +52,7 @@ import java.io.File
 internal fun CaptureScreen(
     onOpenMemo: () -> Unit,
     onOpenChat: () -> Unit = {},
+    onOpenSettings: () -> Unit = {},
     viewModel: CaptureViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -144,6 +145,9 @@ internal fun CaptureScreen(
                     }
                     Button(onClick = onOpenMemo) {
                         Text(stringResource(R.string.capture_top_open_list))
+                    }
+                    Button(onClick = onOpenSettings) {
+                        Text(stringResource(R.string.capture_top_open_settings))
                     }
                 },
             )
