@@ -51,6 +51,7 @@ import java.io.File
 @Composable
 internal fun CaptureScreen(
     onOpenMemo: () -> Unit,
+    onOpenChat: () -> Unit = {},
     viewModel: CaptureViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -138,6 +139,9 @@ internal fun CaptureScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.capture_top_title)) },
                 actions = {
+                    Button(onClick = onOpenChat) {
+                        Text(stringResource(R.string.capture_top_open_chat))
+                    }
                     Button(onClick = onOpenMemo) {
                         Text(stringResource(R.string.capture_top_open_list))
                     }

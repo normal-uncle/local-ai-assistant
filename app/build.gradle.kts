@@ -39,6 +39,7 @@ android {
 dependencies {
     implementation(project(":ui_component"))
     implementation(project(":feature_capture"))
+    implementation(project(":feature_chat"))
     implementation(project(":feature_memo"))
     implementation(project(":remote"))
     implementation(project(":feature_onboarding"))

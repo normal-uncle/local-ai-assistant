@@ -16,6 +16,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.just.assistant.deeplink.DeepLinkRouter
 import com.just.assistant.ui.component.theme.AssistantTheme
 import com.just.feature.capture.CaptureScene
+import com.just.feature.chat.ChatScene
 import com.just.feature.memo.MemoScene
 import com.just.feature.onboarding.OnboardingScene
 import dagger.hilt.EntryPoint
@@ -72,6 +73,7 @@ fun AssistantApp() {
                         entry<AssistantRoute.Capture> {
                             CaptureScene(
                                 onOpenMemo = { backStack.add(AssistantRoute.Memo) },
+                                onOpenChat = { backStack.add(AssistantRoute.Chat) },
                             )
                         }
                         entry<AssistantRoute.Memo> {
@@ -85,6 +87,9 @@ fun AssistantApp() {
                                     pendingDeepLinkNoteId = null
                                 }
                             }
+                        }
+                        entry<AssistantRoute.Chat> {
+                            ChatScene(onBack = { backStack.removeLastOrNull() })
                         }
                     },
             )

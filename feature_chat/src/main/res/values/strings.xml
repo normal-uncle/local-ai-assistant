@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="chat_title">채팅</string>
+    <string name="chat_input_hint">메시지를 입력하세요</string>
+    <string name="chat_send">전송</string>
+    <string name="chat_cancel">취소</string>
+    <string name="chat_new">새 대화</string>
+    <string name="chat_model_not_ready">모델 준비 중입니다. 온보딩을 완료하세요.</string>
+    <string name="chat_error">응답 중 오류가 발생했습니다. 새 대화를 시작해 주세요.</string>
+    <string name="chat_voice_input">음성</string>
+    <string name="chat_voice_prompt">말씀하세요</string>
+    <string name="chat_voice_unavailable">음성 인식을 사용할 수 없습니다</string>
+</resources>
