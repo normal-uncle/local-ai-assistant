@@ -12,4 +12,7 @@ sealed interface AssistantRoute : NavKey {
 
     @Serializable
     data object Memo : AssistantRoute
+
+    @Serializable
+    data object Chat : AssistantRoute
 }
