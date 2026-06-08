@@ -60,6 +60,13 @@ internal fun ChatScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.chat_title)) },
                 actions = {
+                    TextButton(onClick = viewModel::onToggleTts) {
+                        Text(
+                            stringResource(
+                                if (state.ttsEnabled) R.string.chat_tts_on else R.string.chat_tts_off,
+                            ),
+                        )
+                    }
                     TextButton(onClick = viewModel::onResetConversation) {
                         Text(stringResource(R.string.chat_new))
                     }

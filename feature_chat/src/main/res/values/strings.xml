@@ -10,4 +10,6 @@
     <string name="chat_voice_input">음성</string>
     <string name="chat_voice_prompt">말씀하세요</string>
     <string name="chat_voice_unavailable">음성 인식을 사용할 수 없습니다</string>
+    <string name="chat_tts_on">음성 끄기</string>
+    <string name="chat_tts_off">음성 켜기</string>
 </resources>
