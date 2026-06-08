@@ -35,6 +35,14 @@ class ChatViewModelTest {
         override suspend fun invoke(): ChatSession? { count++; return session }
     }
 
+    private class FakeTts : com.just.assistant.local.audio.TtsSpeaker {
+        var spokenText: String? = null
+        var speakCount = 0
+        var stopCount = 0
+        override fun speak(text: String) { speakCount++; spokenText = text }
+        override fun stop() { stopCount++ }
+    }
+
     @Before fun setUp() { Dispatchers.setMain(dispatcher) }
     @After fun tearDown() { Dispatchers.resetMain() }
 
@@ -42,7 +50,7 @@ class ChatViewModelTest {
     fun send_appends_streaming_deltas_to_assistant_message() =
         runTest {
             val session = FakeSession(listOf("안", "녕", "하세요"))
-            val vm = ChatViewModel(FakeStart(session))
+            val vm = ChatViewModel(FakeStart(session), FakeTts())
             vm.onInputChanged("안녕")
             vm.onSend()
             advanceUntilIdle()
@@ -60,7 +68,7 @@ class ChatViewModelTest {
         runTest {
             val session = FakeSession(listOf("a"))
             val start = FakeStart(session)
-            val vm = ChatViewModel(start)
+            val vm = ChatViewModel(start, FakeTts())
             vm.onInputChanged("hi"); vm.onSend(); advanceUntilIdle()
             vm.onInputChanged("again"); vm.onSend(); advanceUntilIdle()
             assertEquals(1, start.count)
@@ -70,7 +78,7 @@ class ChatViewModelTest {
     @Test
     fun model_not_ready_sets_flag() =
         runTest {
-            val vm = ChatViewModel(FakeStart(null))
+            val vm = ChatViewModel(FakeStart(null), FakeTts())
             vm.onInputChanged("hi")
             vm.onSend()
             advanceUntilIdle()
@@ -85,12 +93,59 @@ class ChatViewModelTest {
                     override fun send(message: String): Flow<String> = flow { throw RuntimeException("4096") }
                     override fun close() {}
                 }
-            val vm = ChatViewModel(FakeStart(failing))
+            val vm = ChatViewModel(FakeStart(failing), FakeTts())
             vm.onInputChanged("hi")
             vm.onSend()
             advanceUntilIdle()
             val st = vm.state.first()
             assertFalse(st.isStreaming)
             assertEquals(false, st.error.isNullOrEmpty())
+        }
+
+    @Test
+    fun speaks_final_text_when_tts_enabled_and_stream_completes() =
+        runTest {
+            val session = FakeSession(listOf("안", "녕"))
+            val tts = FakeTts()
+            val vm = ChatViewModel(FakeStart(session), tts)
+            vm.onToggleTts()
+            vm.onInputChanged("hi")
+            vm.onSend()
+            advanceUntilIdle()
+            assertEquals(1, tts.speakCount)
+            assertEquals("안녕", tts.spokenText)
+        }
+
+    @Test
+    fun does_not_speak_when_tts_disabled() =
+        runTest {
+            val tts = FakeTts()
+            val vm = ChatViewModel(FakeStart(FakeSession(listOf("a"))), tts)
+            vm.onInputChanged("hi")
+            vm.onSend()
+            advanceUntilIdle()
+            assertEquals(0, tts.speakCount)
+        }
+
+    @Test
+    fun onSend_stops_previous_speech() =
+        runTest {
+            val tts = FakeTts()
+            val vm = ChatViewModel(FakeStart(FakeSession(listOf("a"))), tts)
+            vm.onInputChanged("hi")
+            vm.onSend()
+            advanceUntilIdle()
+            assertEquals(true, tts.stopCount >= 1)
+        }
+
+    @Test
+    fun toggle_off_stops_speech() =
+        runTest {
+            val tts = FakeTts()
+            val vm = ChatViewModel(FakeStart(FakeSession(listOf("a"))), tts)
+            vm.onToggleTts()
+            vm.onToggleTts()
+            assertEquals(true, tts.stopCount >= 1)
+            assertEquals(false, vm.state.first().ttsEnabled)
         }
 }
