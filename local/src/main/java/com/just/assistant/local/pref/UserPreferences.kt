@@ -25,4 +25,13 @@ class UserPreferences
         suspend fun setOnboardingDone(done: Boolean) {
             context.dataStore.edit { it[keyOnboardingDone] = done }
         }
+
+        private val keyBriefingEnabled = booleanPreferencesKey("briefing_enabled")
+
+        val briefingEnabled: Flow<Boolean> =
+            context.dataStore.data.map { it[keyBriefingEnabled] ?: false }
+
+        suspend fun setBriefingEnabled(enabled: Boolean) {
+            context.dataStore.edit { it[keyBriefingEnabled] = enabled }
+        }
     }
