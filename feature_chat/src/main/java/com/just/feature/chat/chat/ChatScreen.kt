@@ -59,6 +59,13 @@ internal fun ChatScreen(
                     modifier = Modifier.fillMaxWidth().padding(8.dp),
                 )
             }
+            if (state.error != null) {
+                Text(
+                    text = stringResource(R.string.chat_error),
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                )
+            }
             LazyColumn(
                 modifier = Modifier.fillMaxWidth().weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),

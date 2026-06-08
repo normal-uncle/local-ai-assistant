@@ -75,7 +75,8 @@ class ChatViewModel
                         } catch (t: Throwable) {
                             session?.close()
                             session = null
-                            _state.update { it.copy(error = t.message ?: "오류", isStreaming = false) }
+                            // error를 non-null로 세팅(내용은 UI가 친절한 문자열로 대체) — 사용자에게 raw 예외 미노출.
+                            _state.update { it.copy(error = t.message ?: "", isStreaming = false) }
                         } finally {
                             _state.update { it.copy(isStreaming = false) }
                         }
