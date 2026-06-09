@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_title">Prepare AI model</string>
+    <string name="onboarding_subtitle">Download the model that runs on your device. Wi-Fi recommended.</string>
+    <string name="onboarding_start">Start download</string>
+    <string name="onboarding_progress_format">Progress: %1$d%% (%2$s)</string>
+    <string name="onboarding_done">Download complete</string>
+    <string name="onboarding_continue">Go to Capture</string>
+    <string name="onboarding_error">Failed: %1$s</string>
+    <string name="onboarding_retry">Retry</string>
+    <string name="onboarding_variant_format">Variant: %1$s</string>
+    <string name="onboarding_error_generic">Download failed</string>
+</resources>

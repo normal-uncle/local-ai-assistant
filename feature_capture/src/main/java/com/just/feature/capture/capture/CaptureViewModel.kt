@@ -197,7 +197,7 @@ class CaptureViewModel
                     }
                     _state.update { CaptureState() }
                 } catch (e: Exception) {
-                    _state.update { it.copy(isSaving = false, error = e.message ?: "저장 실패") }
+                    _state.update { it.copy(isSaving = false, error = e.message ?: "") }
                 }
             }
         }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_channel_reminders">Reminders</string>
+    <string name="notification_action_done">Done</string>
+    <string name="notification_action_snooze">Snooze 5 min</string>
+    <string name="notification_channel_briefing">Morning Briefing</string>
+    <string name="briefing_title">%1$d events today</string>
+    <string name="briefing_more">…and %1$d more</string>
+</resources>

@@ -66,7 +66,7 @@ internal fun OnboardingScreen(
                     Button(onClick = onDone) { Text(stringResource(R.string.onboarding_continue)) }
                 }
                 ModelStatus.FAILED -> {
-                    Text(stringResource(R.string.onboarding_error, "다운로드 실패"))
+                    Text(stringResource(R.string.onboarding_error, stringResource(R.string.onboarding_error_generic)))
                     Spacer(Modifier.height(12.dp))
                     Button(onClick = onStart) { Text(stringResource(R.string.onboarding_retry)) }
                 }
