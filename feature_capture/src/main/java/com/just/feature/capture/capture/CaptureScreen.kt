@@ -216,6 +216,14 @@ internal fun CaptureScreen(
                     enabled = (state.input.isNotBlank() || state.pickedImage != null) && !state.isSaving && !state.isPreparing,
                     modifier = Modifier.testTag("capture_prepare"),
                 ) { Text(stringResource(R.string.capture_prepare)) }
+                state.error?.let { msg ->
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = msg.ifBlank { stringResource(R.string.capture_save_failed) },
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
                 if (state.isPreparing) {
                     Spacer(Modifier.height(12.dp))
                     androidx.compose.foundation.layout.Row(
