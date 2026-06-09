@@ -3,4 +3,16 @@
     <string name="settings_title">Settings</string>
     <string name="settings_briefing_label">Morning briefing</string>
     <string name="settings_briefing_desc">Get a notification with today\'s schedule every morning at 8 AM</string>
+    <string name="about_open_label">About</string>
+    <string name="about_title">About</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_licenses_header">Open-source licenses</string>
+    <string name="about_licenses_intro">This app uses the following open-source libraries, all licensed under the Apache License 2.0.</string>
+    <string name="about_licenses_list">• AndroidX / Jetpack Compose\n• Hilt (Dagger)\n• Kotlin Coroutines · Serialization (JetBrains)\n• Coil\n• Room\n• OkHttp · Retrofit\n• AndroidX Navigation3 · Lifecycle · DataStore · WorkManager\n• Google AI Edge LiteRT-LM</string>
+    <string name="about_apache_notice">Apache License 2.0\nhttps://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="about_model_header">AI model</string>
+    <string name="about_model_body">Gemma 4 (E2B) © Google. Subject to the Gemma Terms of Use.</string>
+    <string name="about_model_terms_url">https://ai.google.dev/gemma/terms</string>
+    <string name="about_privacy_header">Privacy policy</string>
+    <string name="about_privacy_body">This app is designed with your privacy first.\n\n• On-device processing: your text, image, and voice input and the notes/events created from them are processed and stored only on your device, and are never sent to external servers.\n• AI inference: runs entirely on your device. The AI model file is downloaded once; only the model file is transferred at that time (not your data).\n• Speech recognition: uses your device\'s system speech recognition, subject to system policies.\n• Permissions: used only for camera (photos), microphone (voice input), calendar (creating/editing events), notifications (alarms and morning briefing), and exact alarms.\n• Storage and deletion: all data is kept in the app\'s on-device storage and is removed when you uninstall the app.\n• No tracking or ads: the app performs no user tracking, advertising, or third-party analytics.</string>
 </resources>

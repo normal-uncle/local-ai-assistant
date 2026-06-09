@@ -3,4 +3,16 @@
     <string name="settings_title">설정</string>
     <string name="settings_briefing_label">아침 브리핑</string>
     <string name="settings_briefing_desc">매일 오전 8시에 오늘 일정을 알림으로 받습니다</string>
+    <string name="about_open_label">앱 정보</string>
+    <string name="about_title">앱 정보</string>
+    <string name="about_version">버전 %1$s</string>
+    <string name="about_licenses_header">오픈소스 라이선스</string>
+    <string name="about_licenses_intro">이 앱은 다음 오픈소스 라이브러리를 사용하며, 모두 Apache License 2.0 하에 배포됩니다.</string>
+    <string name="about_licenses_list">• AndroidX / Jetpack Compose\n• Hilt (Dagger)\n• Kotlin Coroutines · Serialization (JetBrains)\n• Coil\n• Room\n• OkHttp · Retrofit\n• AndroidX Navigation3 · Lifecycle · DataStore · WorkManager\n• Google AI Edge LiteRT-LM</string>
+    <string name="about_apache_notice">Apache License 2.0\nhttps://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="about_model_header">AI 모델</string>
+    <string name="about_model_body">Gemma 4 (E2B) © Google. Gemma 이용약관(Gemma Terms of Use)이 적용됩니다.</string>
+    <string name="about_model_terms_url">https://ai.google.dev/gemma/terms</string>
+    <string name="about_privacy_header">프라이버시 정책</string>
+    <string name="about_privacy_body">이 앱은 사용자의 프라이버시를 최우선으로 설계되었습니다.\n\n• 온디바이스 처리: 입력한 텍스트·이미지·음성과 생성된 메모·일정은 모두 기기 안에서만 처리·저장되며 외부 서버로 전송되지 않습니다.\n• AI 추론: 전적으로 기기에서 실행됩니다. AI 모델 파일은 최초 1회 다운로드되며, 이때 전송되는 것은 모델 파일뿐입니다(사용자 데이터 아님).\n• 음성 인식: 기기의 시스템 음성 인식을 사용하며 해당 처리는 시스템 정책을 따릅니다.\n• 권한: 카메라(사진), 마이크(음성 입력), 캘린더(일정 등록·수정), 알림(알람·아침 브리핑), 정확한 알람에만 사용됩니다.\n• 보관·삭제: 모든 데이터는 기기 내부 저장소에 보관되며 앱 삭제 시 함께 제거됩니다.\n• 추적·광고 없음: 사용자 추적·광고·외부 분석을 수행하지 않습니다.</string>
 </resources>
