@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -8,6 +10,11 @@ plugins {
 }
 
 kotlin { jvmToolchain(18) }
+
+val keystoreProps = Properties().apply {
+    val f = rootProject.file("keystore.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
 
 android {
     namespace = "com.just.assistant"
@@ -23,11 +30,26 @@ android {
         resourceConfigurations += listOf("en", "ko")
     }
 
+    signingConfigs {
+        if (keystoreProps.getProperty("storeFile") != null) {
+            create("release") {
+                storeFile = file(keystoreProps.getProperty("storeFile"))
+                storePassword = keystoreProps.getProperty("storePassword")
+                keyAlias = keystoreProps.getProperty("keyAlias")
+                keyPassword = keystoreProps.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         debug { isMinifyEnabled = false }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (keystoreProps.getProperty("storeFile") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
