@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="memo_list_title">Notes</string>
+    <string name="memo_list_empty">No saved notes</string>
+    <string name="memo_detail_title">Note</string>
+    <string name="memo_detail_loading">Loading…</string>
+    <string name="memo_detail_not_found">Note not found.</string>
+    <string name="memo_detail_chip_calendar">Added to calendar</string>
+    <string name="memo_detail_chip_alarm">Alarm set</string>
+    <string name="memo_detail_unschedule">Unschedule</string>
+    <string name="memo_detail_unschedule_done">Unscheduled</string>
+    <string name="memo_detail_reschedule">Change time</string>
+    <string name="memo_detail_reschedule_done">Time changed</string>
+    <string name="memo_detail_completed">Completed</string>
+    <string name="memo_detail_image_desc">Attached image</string>
+    <string name="memo_datetime_picker_title">Select date &amp; time</string>
+    <string name="memo_datetime_confirm">OK</string>
+    <string name="memo_datetime_cancel">Cancel</string>
+    <string name="memo_datetime_to_time">→ Time</string>
+    <string name="memo_datetime_to_date">← Date</string>
+</resources>

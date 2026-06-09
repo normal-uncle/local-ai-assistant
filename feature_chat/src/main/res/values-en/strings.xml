@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="chat_title">Chat</string>
+    <string name="chat_input_hint">Type a message</string>
+    <string name="chat_send">Send</string>
+    <string name="chat_cancel">Cancel</string>
+    <string name="chat_new">New chat</string>
+    <string name="chat_model_not_ready">Model not ready. Please complete onboarding.</string>
+    <string name="chat_error">Something went wrong. Please start a new chat.</string>
+    <string name="chat_voice_input">Voice</string>
+    <string name="chat_voice_prompt">Speak now</string>
+    <string name="chat_voice_unavailable">Speech recognition unavailable</string>
+    <string name="chat_tts_on">Voice off</string>
+    <string name="chat_tts_off">Voice on</string>
+</resources>
