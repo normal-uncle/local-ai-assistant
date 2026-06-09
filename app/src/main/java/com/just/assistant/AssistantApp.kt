@@ -94,7 +94,10 @@ fun AssistantApp() {
                             ChatScene(onBack = { backStack.removeLastOrNull() })
                         }
                         entry<AssistantRoute.Settings> {
-                            SettingsScene(onBack = { backStack.removeLastOrNull() })
+                            SettingsScene(
+                                onBack = { backStack.removeLastOrNull() },
+                                appVersion = BuildConfig.VERSION_NAME,
+                            )
                         }
                     },
             )
