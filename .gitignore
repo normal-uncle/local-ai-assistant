@@ -25,3 +25,5 @@ captures/
 # 빌드 산출물
 *.log
 *.tmp
+
+.superpowers/

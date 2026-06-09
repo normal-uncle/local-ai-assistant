@@ -32,7 +32,7 @@ object BriefingNotifier {
 
         val notification =
             NotificationCompat.Builder(context, NotificationChannelInitializer.CHANNEL_BRIEFING)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setSmallIcon(com.just.assistant.R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(briefing.items.firstOrNull() ?: title)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(body))
