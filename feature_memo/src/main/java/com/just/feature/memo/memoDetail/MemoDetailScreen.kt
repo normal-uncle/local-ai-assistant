@@ -9,18 +9,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -35,6 +33,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.just.assistant.ui.component.AssistantChip
+import com.just.assistant.ui.component.AssistantScaffold
+import com.just.assistant.ui.component.AssistantTopBar
+import com.just.assistant.ui.component.ChipTone
+import com.just.assistant.ui.component.PrimaryButton
+import com.just.assistant.ui.component.SecondaryButton
+import com.just.assistant.ui.component.SectionCard
+import com.just.assistant.ui.component.theme.Radius
+import com.just.assistant.ui.component.theme.Spacing
 import com.just.feature.memo.DateTimePickerSheet
 import com.just.feature.memo.R
 
@@ -52,7 +59,11 @@ internal fun MemoDetailScreen(
     val context = LocalContext.current
     var showRescheduleSheet by remember { mutableStateOf(false) }
 
-    Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.memo_detail_title)) }) }) { padding ->
+    AssistantScaffold(
+        topBar = {
+            AssistantTopBar(title = stringResource(R.string.memo_detail_title), onBack = onBack)
+        },
+    ) { padding ->
         Column(
             Modifier
                 .padding(padding)
@@ -71,21 +82,21 @@ internal fun MemoDetailScreen(
                             textDecoration = if (note.isCompleted) TextDecoration.LineThrough else null,
                         )
                         if (note.isCompleted) {
-                            Spacer(Modifier.padding(start = 8.dp))
+                            Spacer(Modifier.padding(start = Spacing.sm))
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = stringResource(R.string.memo_detail_completed),
                             )
                         }
                     }
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(Spacing.sm))
                     note.imageUri?.let { uri ->
                         AsyncImage(
                             model = uri,
                             contentDescription = stringResource(R.string.memo_detail_image_desc),
-                            modifier = Modifier.fillMaxWidth().height(220.dp),
+                            modifier = Modifier.fillMaxWidth().height(220.dp).clip(RoundedCornerShape(Radius.lg)),
                         )
-                        Spacer(Modifier.height(8.dp))
+                        Spacer(Modifier.height(Spacing.sm))
                     }
                     Text(
                         text = note.body,
@@ -96,39 +107,29 @@ internal fun MemoDetailScreen(
                     val hasCalendar = note.calendarEventId != null
                     val hasAlarm = note.alarmRequestId != null
                     if (!note.isCompleted && (hasCalendar || hasAlarm)) {
-                        Spacer(Modifier.height(16.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            if (hasCalendar) {
-                                AssistChip(
-                                    onClick = {},
-                                    label = { Text(stringResource(R.string.memo_detail_chip_calendar)) },
-                                    colors = AssistChipDefaults.assistChipColors(),
+                        Spacer(Modifier.height(Spacing.lg))
+                        SectionCard {
+                            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+                                if (hasCalendar) AssistantChip(stringResource(R.string.memo_detail_chip_calendar), leadingIcon = Icons.Filled.Event, tone = ChipTone.Success)
+                                if (hasAlarm) AssistantChip(stringResource(R.string.memo_detail_chip_alarm), leadingIcon = Icons.Filled.Notifications, tone = ChipTone.Primary)
+                            }
+                            Spacer(Modifier.height(Spacing.md))
+                            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+                                SecondaryButton(
+                                    text = stringResource(R.string.memo_detail_reschedule),
+                                    onClick = { showRescheduleSheet = true },
                                 )
-                            }
-                            if (hasAlarm) {
-                                AssistChip(
-                                    onClick = {},
-                                    label = { Text(stringResource(R.string.memo_detail_chip_alarm)) },
-                                    colors = AssistChipDefaults.assistChipColors(),
+                                PrimaryButton(
+                                    text = stringResource(R.string.memo_detail_unschedule),
+                                    onClick = {
+                                        viewModel.onUnschedule()
+                                        Toast.makeText(
+                                            context,
+                                            R.string.memo_detail_unschedule_done,
+                                            Toast.LENGTH_SHORT,
+                                        ).show()
+                                    },
                                 )
-                            }
-                        }
-                        Spacer(Modifier.height(12.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedButton(onClick = { showRescheduleSheet = true }) {
-                                Text(stringResource(R.string.memo_detail_reschedule))
-                            }
-                            Button(
-                                onClick = {
-                                    viewModel.onUnschedule()
-                                    Toast.makeText(
-                                        context,
-                                        R.string.memo_detail_unschedule_done,
-                                        Toast.LENGTH_SHORT,
-                                    ).show()
-                                },
-                            ) {
-                                Text(stringResource(R.string.memo_detail_unschedule))
                             }
                         }
                     }
