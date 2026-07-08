@@ -1,24 +1,37 @@
 package com.just.feature.onboarding.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.just.assistant.repository.model.ModelDownloadProgress
 import com.just.assistant.repository.model.ModelStatus
+import com.just.assistant.ui.component.AssistantScaffold
+import com.just.assistant.ui.component.PrimaryButton
+import com.just.assistant.ui.component.theme.Radius
+import com.just.assistant.ui.component.theme.Spacing
 import com.just.feature.onboarding.OnboardingState
 import com.just.feature.onboarding.R
 
@@ -28,47 +41,54 @@ internal fun OnboardingScreen(
     onStart: () -> Unit,
     onDone: () -> Unit,
 ) {
-    Scaffold { padding ->
+    AssistantScaffold { padding ->
         Column(
             modifier =
                 Modifier
                     .padding(padding)
-                    .padding(24.dp)
+                    .padding(Spacing.lg)
                     .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(stringResource(R.string.onboarding_title), style = MaterialTheme.typography.titleLarge)
-            Spacer(Modifier.height(12.dp))
+            Box(
+                Modifier.size(96.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center,
+            ) { Icon(Icons.Filled.AutoAwesome, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(44.dp)) }
+            Spacer(Modifier.height(Spacing.xl))
+            Text(stringResource(R.string.onboarding_title), style = MaterialTheme.typography.headlineSmall)
+            Spacer(Modifier.height(Spacing.md))
             Text(stringResource(R.string.onboarding_subtitle), style = MaterialTheme.typography.bodyMedium)
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(Spacing.md))
             state.variantId?.let { vid ->
                 Text(
                     text = stringResource(R.string.onboarding_variant_format, vid),
                     style = MaterialTheme.typography.bodySmall,
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(Spacing.sm))
             }
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(Spacing.xxl))
 
             when (state.status) {
                 ModelStatus.NOT_READY -> {
-                    Button(onClick = onStart) {
-                        Text(stringResource(R.string.onboarding_start))
-                    }
+                    PrimaryButton(stringResource(R.string.onboarding_start), onStart)
                 }
                 ModelStatus.DOWNLOADING -> {
                     ProgressBlock(state.progress)
                 }
                 ModelStatus.READY -> {
                     Text(stringResource(R.string.onboarding_done))
-                    Spacer(Modifier.height(12.dp))
-                    Button(onClick = onDone) { Text(stringResource(R.string.onboarding_continue)) }
+                    Spacer(Modifier.height(Spacing.md))
+                    PrimaryButton(stringResource(R.string.onboarding_continue), onDone)
                 }
                 ModelStatus.FAILED -> {
-                    Text(stringResource(R.string.onboarding_error, stringResource(R.string.onboarding_error_generic)))
-                    Spacer(Modifier.height(12.dp))
-                    Button(onClick = onStart) { Text(stringResource(R.string.onboarding_retry)) }
+                    Icon(Icons.Filled.ErrorOutline, null, tint = MaterialTheme.colorScheme.error)
+                    Text(
+                        stringResource(R.string.onboarding_error, stringResource(R.string.onboarding_error_generic)),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                    Spacer(Modifier.height(Spacing.md))
+                    PrimaryButton(stringResource(R.string.onboarding_retry), onStart)
                 }
             }
         }
@@ -88,8 +108,9 @@ private fun ProgressBlock(progress: ModelDownloadProgress?) {
         }
     LinearProgressIndicator(
         progress = { ratio },
-        modifier = Modifier.fillMaxWidth().height(8.dp),
+        strokeCap = StrokeCap.Round,
+        modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(Radius.sm)),
     )
-    Spacer(Modifier.height(12.dp))
+    Spacer(Modifier.height(Spacing.md))
     Text(stringResource(R.string.onboarding_progress_format, percent, sizeText))
 }
