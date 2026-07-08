@@ -5,7 +5,9 @@ import android.speech.RecognizerIntent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,24 +15,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.just.assistant.ui.component.AssistantScaffold
+import com.just.assistant.ui.component.AssistantTopBar
+import com.just.assistant.ui.component.ChatBubble
+import com.just.assistant.ui.component.theme.Spacing
 import com.just.feature.chat.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,10 +58,10 @@ internal fun ChatScreen(
                 viewModel.onInputChanged(if (current.isEmpty()) transcript else "$current $transcript")
             }
         }
-    Scaffold(
+    AssistantScaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.chat_title)) },
+            AssistantTopBar(
+                title = stringResource(R.string.chat_title),
                 actions = {
                     TextButton(onClick = viewModel::onToggleTts) {
                         Text(
@@ -78,40 +81,57 @@ internal fun ChatScreen(
             Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .padding(12.dp),
+                .padding(Spacing.md),
         ) {
             if (!state.modelReady) {
-                Text(
-                    text = stringResource(R.string.chat_model_not_ready),
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.fillMaxWidth().padding(8.dp),
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = Spacing.sm)
+                        .background(
+                            MaterialTheme.colorScheme.errorContainer,
+                            RoundedCornerShape(Spacing.md),
+                        )
+                        .padding(Spacing.md),
+                ) {
+                    Text(
+                        text = stringResource(R.string.chat_model_not_ready),
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                    )
+                }
             }
             if (state.error != null) {
-                Text(
-                    text = stringResource(R.string.chat_error),
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.fillMaxWidth().padding(8.dp),
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = Spacing.sm)
+                        .background(
+                            MaterialTheme.colorScheme.errorContainer,
+                            RoundedCornerShape(Spacing.md),
+                        )
+                        .padding(Spacing.md),
+                ) {
+                    Text(
+                        text = stringResource(R.string.chat_error),
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                    )
+                }
             }
             LazyColumn(
                 modifier = Modifier.fillMaxWidth().weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(Spacing.sm),
             ) {
                 items(state.messages) { msg ->
-                    val isUser = msg.role == ChatMessage.Role.USER
-                    Text(
+                    ChatBubble(
                         text = msg.text,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = if (isUser) TextAlign.End else TextAlign.Start,
-                        style = MaterialTheme.typography.bodyLarge,
+                        isUser = msg.role == ChatMessage.Role.USER,
                     )
                 }
             }
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = Spacing.sm),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
             ) {
                 OutlinedTextField(
                     value = state.input,
