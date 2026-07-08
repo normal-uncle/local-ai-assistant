@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.just.assistant.ui.component.theme.Elevation
 import com.just.assistant.ui.component.theme.Radius
 import com.just.assistant.ui.component.theme.Spacing
 
@@ -35,7 +36,7 @@ fun MemoCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(Radius.lg),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = Elevation.card),
     ) {
         Row(Modifier.padding(Spacing.lg)) {
             Column(Modifier.weight(1f)) {

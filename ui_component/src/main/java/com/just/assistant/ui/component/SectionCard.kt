@@ -10,7 +10,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.just.assistant.ui.component.theme.Elevation
 import com.just.assistant.ui.component.theme.Radius
 import com.just.assistant.ui.component.theme.Spacing
 
@@ -23,7 +23,7 @@ fun SectionCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(Radius.lg),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = Elevation.card),
     ) {
         Column(Modifier.padding(Spacing.lg), content = content)
     }

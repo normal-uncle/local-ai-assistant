@@ -19,6 +19,8 @@ object ColorSet {
     val L_ON_SUCCESS_CONTAINER = Color(0xFF166B47)
     val L_ERROR = Color(0xFFE5484D)
     val L_ON_ERROR = Color(0xFFFFFFFF)
+    val L_ERROR_CONTAINER = Color(0xFFFCE4E4)
+    val L_ON_ERROR_CONTAINER = Color(0xFF7A1418)
 
     // ---- Dark ----
     val D_BACKGROUND = Color(0xFF0F1216)
@@ -36,6 +38,6 @@ object ColorSet {
     val D_ON_SUCCESS_CONTAINER = Color(0xFFA6E9CB)
     val D_ERROR = Color(0xFFFF6169)
     val D_ON_ERROR = Color(0xFF2A0A0C)
-
-    val WHITE_100 = Color(0xFFFFFFFF)
+    val D_ERROR_CONTAINER = Color(0xFF3A1618)
+    val D_ON_ERROR_CONTAINER = Color(0xFFFFDADA)
 }

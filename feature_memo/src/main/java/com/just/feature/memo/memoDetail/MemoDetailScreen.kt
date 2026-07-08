@@ -68,7 +68,7 @@ internal fun MemoDetailScreen(
             Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(Spacing.lg),
         ) {
             when (val s = state) {
                 MemoDetailState.Loading -> Text(stringResource(R.string.memo_detail_loading))

@@ -22,6 +22,8 @@ private val LightColors = lightColorScheme(
     outline = ColorSet.L_OUTLINE,
     error = ColorSet.L_ERROR,
     onError = ColorSet.L_ON_ERROR,
+    errorContainer = ColorSet.L_ERROR_CONTAINER,
+    onErrorContainer = ColorSet.L_ON_ERROR_CONTAINER,
 )
 
 private val DarkColors = darkColorScheme(
@@ -38,6 +40,8 @@ private val DarkColors = darkColorScheme(
     outline = ColorSet.D_OUTLINE,
     error = ColorSet.D_ERROR,
     onError = ColorSet.D_ON_ERROR,
+    errorContainer = ColorSet.D_ERROR_CONTAINER,
+    onErrorContainer = ColorSet.D_ON_ERROR_CONTAINER,
 )
 
 private val AppTypography = Typography(
