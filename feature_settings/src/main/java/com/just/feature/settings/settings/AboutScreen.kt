@@ -8,13 +8,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import com.just.assistant.ui.component.AssistantScaffold
+import com.just.assistant.ui.component.AssistantTopBar
+import com.just.assistant.ui.component.theme.Spacing
 import com.just.feature.settings.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,14 +23,18 @@ internal fun AboutScreen(
     appVersion: String,
     onBack: () -> Unit,
 ) {
-    Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.about_title)) }) }) { padding ->
+    AssistantScaffold(
+        topBar = {
+            AssistantTopBar(title = stringResource(R.string.about_title), onBack = onBack)
+        },
+    ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(Spacing.lg),
+            verticalArrangement = Arrangement.spacedBy(Spacing.sm),
         ) {
             Text(stringResource(R.string.about_version, appVersion), style = MaterialTheme.typography.titleMedium)
             Text(stringResource(R.string.about_licenses_header), style = MaterialTheme.typography.titleSmall)
