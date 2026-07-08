@@ -50,9 +50,6 @@ import java.io.File
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CaptureScreen(
-    onOpenMemo: () -> Unit,
-    onOpenChat: () -> Unit = {},
-    onOpenSettings: () -> Unit = {},
     viewModel: CaptureViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -139,17 +136,6 @@ internal fun CaptureScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.capture_top_title)) },
-                actions = {
-                    Button(onClick = onOpenChat) {
-                        Text(stringResource(R.string.capture_top_open_chat))
-                    }
-                    Button(onClick = onOpenMemo) {
-                        Text(stringResource(R.string.capture_top_open_list))
-                    }
-                    Button(onClick = onOpenSettings) {
-                        Text(stringResource(R.string.capture_top_open_settings))
-                    }
-                },
             )
         },
     ) { padding ->

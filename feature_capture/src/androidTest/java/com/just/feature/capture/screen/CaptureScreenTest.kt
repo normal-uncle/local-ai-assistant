@@ -50,7 +50,6 @@ class CaptureScreenTest {
     fun input_then_prepare_shows_preview_with_title_and_body() {
         compose.setContent {
             CaptureScreen(
-                onOpenMemo = {},
                 viewModel = CaptureViewModel(
                     FakeSaveNote(), FakeClassify(), FakeScheduleEvent(), FakeScheduleReminder(),
                     FakeClassifyImage(), FakeImageStore(),

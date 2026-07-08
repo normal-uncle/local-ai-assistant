@@ -4,6 +4,6 @@ import androidx.compose.runtime.Composable
 import com.just.feature.capture.capture.CaptureScreen
 
 @Composable
-fun CaptureScene(onOpenMemo: () -> Unit, onOpenChat: () -> Unit, onOpenSettings: () -> Unit) {
-    CaptureScreen(onOpenMemo = onOpenMemo, onOpenChat = onOpenChat, onOpenSettings = onOpenSettings)
+fun CaptureScene() {
+    CaptureScreen()
 }

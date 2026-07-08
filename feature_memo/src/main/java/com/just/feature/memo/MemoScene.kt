@@ -12,8 +12,12 @@ import com.just.feature.memo.memoList.MemoListScreen
 fun MemoScene(
     onBackToApp: () -> Unit,
     initialDetailNoteId: Long? = null,
+    onDetailOpenChange: (Boolean) -> Unit = {},
 ) {
     val backStack = rememberNavBackStack(MemoSubRoute.List)
+    LaunchedEffect(backStack.lastOrNull()) {
+        onDetailOpenChange(backStack.lastOrNull() is MemoSubRoute.Detail)
+    }
     LaunchedEffect(initialDetailNoteId) {
         if (initialDetailNoteId != null && initialDetailNoteId >= 0L) {
             val last = backStack.lastOrNull()
