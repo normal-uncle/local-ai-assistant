@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="capture_top_title">New note</string>
-    <string name="capture_top_open_list">List</string>
-    <string name="capture_top_open_chat">Chat</string>
-    <string name="capture_top_open_settings">Settings</string>
     <string name="capture_input_label">Content</string>
     <string name="capture_prepare">Preview</string>
     <string name="capture_preparing">Analyzing…</string>

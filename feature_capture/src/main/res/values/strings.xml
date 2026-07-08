@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="capture_top_title">새 메모</string>
-    <string name="capture_top_open_list">목록</string>
-    <string name="capture_top_open_chat">채팅</string>
-    <string name="capture_top_open_settings">설정</string>
     <string name="capture_input_label">내용</string>
     <string name="capture_prepare">저장 미리보기</string>
     <string name="capture_preparing">AI 분석 중…</string>

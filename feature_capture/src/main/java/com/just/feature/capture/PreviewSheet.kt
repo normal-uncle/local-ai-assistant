@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -27,6 +26,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.just.assistant.repository.model.NoteType
+import com.just.assistant.ui.component.PrimaryButton
+import com.just.assistant.ui.component.theme.Spacing
 import com.just.feature.capture.capture.CapturePreview
 import java.time.Instant
 import java.time.LocalDateTime
@@ -59,14 +60,14 @@ fun PreviewSheet(
     Column(
         modifier =
             Modifier
-                .padding(16.dp)
+                .padding(Spacing.lg)
                 .fillMaxWidth(),
     ) {
         Text(
             text = stringResource(R.string.capture_preview_title),
             style = MaterialTheme.typography.titleMedium,
         )
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(Spacing.md))
 
         preview.imageUri?.let { uri ->
             AsyncImage(
@@ -74,10 +75,10 @@ fun PreviewSheet(
                 contentDescription = null,
                 modifier = Modifier.fillMaxWidth().height(160.dp),
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(Spacing.md))
         }
 
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
             NoteType.entries.forEach { t ->
                 FilterChip(
                     selected = type == t,
@@ -91,7 +92,7 @@ fun PreviewSheet(
                 )
             }
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(Spacing.md))
 
         OutlinedTextField(
             value = title,
@@ -99,7 +100,7 @@ fun PreviewSheet(
             label = { Text(stringResource(R.string.capture_field_title)) },
             modifier = Modifier.fillMaxWidth(),
         )
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(Spacing.sm))
         OutlinedTextField(
             value = body,
             onValueChange = { body = it },
@@ -108,7 +109,7 @@ fun PreviewSheet(
         )
 
         if (type == NoteType.EVENT || type == NoteType.REMINDER) {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(Spacing.md))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -134,7 +135,7 @@ fun PreviewSheet(
                 )
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(Spacing.sm))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -151,13 +152,14 @@ fun PreviewSheet(
             }
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(Spacing.lg))
         Row {
             TextButton(onClick = onCancel) {
                 Text(stringResource(R.string.capture_cancel))
             }
-            Spacer(Modifier.width(8.dp))
-            Button(
+            Spacer(Modifier.width(Spacing.sm))
+            PrimaryButton(
+                text = stringResource(R.string.capture_save),
                 onClick = {
                     onConfirm(
                         CapturePreviewConfirmed(
@@ -171,9 +173,7 @@ fun PreviewSheet(
                     )
                 },
                 modifier = Modifier.testTag("capture_save"),
-            ) {
-                Text(stringResource(R.string.capture_save))
-            }
+            )
         }
     }
 
