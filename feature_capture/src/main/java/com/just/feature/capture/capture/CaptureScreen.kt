@@ -6,6 +6,7 @@ import android.speech.RecognizerIntent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,17 +16,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -40,6 +46,11 @@ import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.just.assistant.ui.component.AssistantScaffold
+import com.just.assistant.ui.component.AssistantTopBar
+import com.just.assistant.ui.component.PrimaryButton
+import com.just.assistant.ui.component.theme.Radius
+import com.just.assistant.ui.component.theme.Spacing
 import com.just.assistant.repository.model.NoteType
 import com.just.feature.capture.PreviewSheet
 import com.just.feature.capture.R
@@ -132,11 +143,9 @@ internal fun CaptureScreen(
         }
     }
 
-    Scaffold(
+    AssistantScaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.capture_top_title)) },
-            )
+            AssistantTopBar(stringResource(R.string.capture_top_title))
         },
     ) { padding ->
         Box(
@@ -146,7 +155,7 @@ internal fun CaptureScreen(
         ) {
             Column(
                 Modifier
-                    .padding(16.dp)
+                    .padding(Spacing.lg)
                     .fillMaxSize(),
             ) {
                 OutlinedTextField(
@@ -158,17 +167,27 @@ internal fun CaptureScreen(
                             .fillMaxWidth()
                             .testTag("capture_input"),
                 )
-                Spacer(Modifier.height(12.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = {
+                Spacer(Modifier.height(Spacing.md))
+                Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+                    IconButton(onClick = {
                         galleryLauncher.launch(
                             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
                         )
-                    }) { Text(stringResource(R.string.capture_pick_gallery)) }
-                    Button(onClick = {
+                    }) {
+                        Icon(
+                            Icons.Filled.PhotoLibrary,
+                            contentDescription = stringResource(R.string.capture_pick_gallery),
+                        )
+                    }
+                    IconButton(onClick = {
                         cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-                    }) { Text(stringResource(R.string.capture_take_photo)) }
-                    Button(onClick = {
+                    }) {
+                        Icon(
+                            Icons.Filled.PhotoCamera,
+                            contentDescription = stringResource(R.string.capture_take_photo),
+                        )
+                    }
+                    IconButton(onClick = {
                         val intent =
                             Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                                 putExtra(
@@ -184,39 +203,52 @@ internal fun CaptureScreen(
                         } catch (e: android.content.ActivityNotFoundException) {
                             android.widget.Toast.makeText(context, voiceUnavailable, android.widget.Toast.LENGTH_SHORT).show()
                         }
-                    }) { Text(stringResource(R.string.capture_voice_input)) }
+                    }) {
+                        Icon(
+                            Icons.Filled.Mic,
+                            contentDescription = stringResource(R.string.capture_voice_input),
+                        )
+                    }
                 }
                 state.pickedImage?.let { uri ->
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(Spacing.sm))
                     AsyncImage(
                         model = uri,
                         contentDescription = stringResource(R.string.capture_image_thumbnail_desc),
-                        modifier = Modifier.fillMaxWidth().height(160.dp).testTag("capture_thumbnail"),
+                        modifier = Modifier.fillMaxWidth().height(160.dp).clip(RoundedCornerShape(Radius.lg)).testTag("capture_thumbnail"),
                     )
                 }
-                Spacer(Modifier.height(12.dp))
-                Button(
+                Spacer(Modifier.height(Spacing.md))
+                PrimaryButton(
+                    text = stringResource(R.string.capture_prepare),
                     onClick = {
                         if (state.pickedImage != null) viewModel.onPrepareImage(imageFallbackTitle) else viewModel.onPrepare()
                     },
+                    modifier = Modifier.fillMaxWidth().testTag("capture_prepare"),
                     enabled = (state.input.isNotBlank() || state.pickedImage != null) && !state.isSaving && !state.isPreparing,
-                    modifier = Modifier.testTag("capture_prepare"),
-                ) { Text(stringResource(R.string.capture_prepare)) }
+                )
                 state.error?.let { msg ->
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = msg.ifBlank { stringResource(R.string.capture_save_failed) },
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                    Spacer(Modifier.height(Spacing.sm))
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(Radius.md))
+                            .background(MaterialTheme.colorScheme.errorContainer)
+                            .padding(Spacing.md),
+                    ) {
+                        Text(
+                            text = msg.ifBlank { stringResource(R.string.capture_save_failed) },
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                        )
+                    }
                 }
                 if (state.isPreparing) {
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(Spacing.md))
                     androidx.compose.foundation.layout.Row(
                         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.md),
                     ) {
-                        CircularProgressIndicator(modifier = Modifier.padding(end = 4.dp))
+                        CircularProgressIndicator(modifier = Modifier.padding(end = Spacing.xs))
                         Text(
                             text = stringResource(R.string.capture_preparing),
                             style = MaterialTheme.typography.bodyMedium,
