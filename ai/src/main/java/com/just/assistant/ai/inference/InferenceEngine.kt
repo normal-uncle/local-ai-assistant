@@ -31,6 +31,22 @@ interface InferenceEngine {
     suspend fun generate(prompt: String, images: List<ByteArray>): String
 
     /**
+     * 오디오 포함 멀티모달 추론. [audios] 가 비었으면 [generate] (prompt, images) 와 동일.
+     * 각 오디오는 WAV 등 SDK가 디코드 가능한 바이트.
+     * 기본 구현은 오디오 미지원 throw — 오디오 지원 엔진(LiteRtLm)만 override.
+     */
+    suspend fun generate(
+        prompt: String,
+        images: List<ByteArray>,
+        audios: List<ByteArray>,
+    ): String =
+        if (audios.isEmpty()) {
+            generate(prompt, images)
+        } else {
+            throw UnsupportedOperationException("audio input not supported")
+        }
+
+    /**
      * 멀티턴 채팅 세션 시작. 호출 전 [load] 필요.
      * 기본 구현은 미지원 throw — 채팅 지원 엔진(LiteRtLm)만 override.
      */

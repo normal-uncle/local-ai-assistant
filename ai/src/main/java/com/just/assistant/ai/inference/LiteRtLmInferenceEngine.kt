@@ -75,12 +75,14 @@ class LiteRtLmInferenceEngine
                         maxNumTokens = config.maxTokens,
                         cacheDir = context.cacheDir.absolutePath,
                     )
-                val baseConfig =
-                    if (config.enableVision) {
-                        textConfig.copy(visionBackend = Backend.CPU(), maxNumImages = 1)
-                    } else {
-                        textConfig
-                    }
+                // vision/audio 백엔드 미초기화 상태로 해당 모달리티 입력 시 네이티브 무한 정지(spike 확인).
+                var baseConfig = textConfig
+                if (config.enableVision) {
+                    baseConfig = baseConfig.copy(visionBackend = Backend.CPU(), maxNumImages = 1)
+                }
+                if (config.enableAudio) {
+                    baseConfig = baseConfig.copy(audioBackend = Backend.CPU())
+                }
 
                 val (newEngine, backend) =
                     if (!config.preferGpu) {
@@ -158,6 +160,12 @@ class LiteRtLmInferenceEngine
         override suspend fun generate(
             prompt: String,
             images: List<ByteArray>,
+        ): String = generate(prompt, images, emptyList())
+
+        override suspend fun generate(
+            prompt: String,
+            images: List<ByteArray>,
+            audios: List<ByteArray>,
         ): String =
             withContext(Dispatchers.IO) {
                 val e = engine ?: error("InferenceEngine not loaded; call load() first")
@@ -180,12 +188,14 @@ class LiteRtLmInferenceEngine
 
                 e.createConversation(conversationConfig).use { conversation ->
                     val response =
-                        if (images.isEmpty()) {
+                        if (images.isEmpty() && audios.isEmpty()) {
                             conversation.sendMessage(prompt)
                         } else {
                             val contents =
                                 Contents.of(
-                                    images.map { Content.ImageBytes(it) } + Content.Text(prompt),
+                                    audios.map { Content.AudioBytes(it) } +
+                                        images.map { Content.ImageBytes(it) } +
+                                        Content.Text(prompt),
                                 )
                             conversation.sendMessage(contents)
                         }
