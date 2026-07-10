@@ -14,6 +14,7 @@ import com.just.assistant.repository.model.ModelStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -75,6 +76,7 @@ class ModelRepositoryImplTest {
         val ctx = ApplicationProvider.getApplicationContext<android.content.Context>()
         fileStore = ModelFileStore(ctx)
         prefs = ModelStatusPrefs(ctx)
+        runBlocking { prefs.setStatus("NOT_READY") }
         fileStore.delete("gemma4-e2b-q4")
         val profiler = DeviceProfiler(ctx)
         repo = ModelRepositoryImpl(FakeService(sampleCatalog), FakeDownloader(), fileStore, prefs, profiler)
@@ -107,5 +109,14 @@ class ModelRepositoryImplTest {
             repo.fetchAndSelectRecommendedVariant("https://x/catalog.json")
             repo.downloadSelected()
             assertEquals(ModelStatus.READY, repo.status.first())
+        }
+
+    @Test
+    fun status_is_NOT_READY_when_prefs_say_READY_but_model_file_is_missing() =
+        runTest {
+            repo.fetchAndSelectRecommendedVariant("https://x/catalog.json")
+            repo.downloadSelected()
+            fileStore.delete("gemma4-e2b-q4")
+            assertEquals(ModelStatus.NOT_READY, repo.status.first())
         }
 }

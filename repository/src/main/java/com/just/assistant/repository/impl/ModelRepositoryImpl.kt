@@ -15,7 +15,7 @@ import com.just.assistant.repository.model.ModelVariant
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,10 +35,16 @@ class ModelRepositoryImpl
         private var memoryCache: VariantDto? = null
 
         override val status: Flow<ModelStatus> =
-            prefs.rawStatus.map {
-                when (it) {
+            prefs.rawStatus.combine(prefs.selectedVariantId) { raw, variantId ->
+                when (raw) {
                     "DOWNLOADING" -> ModelStatus.DOWNLOADING
-                    "READY" -> ModelStatus.READY
+                    // 사용자가 저장공간 정리 등으로 파일만 지운 경우 prefs가 READY로 남을 수 있음
+                    "READY" ->
+                        if (variantId != null && fileStore.exists(variantId)) {
+                            ModelStatus.READY
+                        } else {
+                            ModelStatus.NOT_READY
+                        }
                     "FAILED" -> ModelStatus.FAILED
                     else -> ModelStatus.NOT_READY
                 }
