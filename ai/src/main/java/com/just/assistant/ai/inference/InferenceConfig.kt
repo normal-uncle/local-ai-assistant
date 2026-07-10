@@ -8,4 +8,6 @@ data class InferenceConfig(
     val preferGpu: Boolean = true,
     /** true면 EngineConfig에 visionBackend + maxNumImages를 실어 이미지 입력을 허용한다. */
     val enableVision: Boolean = false,
+    /** true면 EngineConfig에 audioBackend를 실어 오디오 입력을 허용한다. */
+    val enableAudio: Boolean = false,
 )
