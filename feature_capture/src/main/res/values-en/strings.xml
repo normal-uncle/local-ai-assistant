@@ -37,8 +37,9 @@
     <string name="capture_image_thumbnail_desc">Selected image preview</string>
     <string name="capture_image_fallback_title">Photo note</string>
     <string name="capture_camera_denied_banner">Without camera permission, only the gallery is available</string>
-    <string name="capture_voice_input">Voice</string>
-    <string name="capture_voice_prompt">Speak now</string>
-    <string name="capture_voice_unavailable">Speech recognition unavailable</string>
+    <string name="capture_record_start">Record voice</string>
+    <string name="capture_record_stop">Stop (%1$ds)</string>
+    <string name="capture_record_permission_denied">Microphone permission required</string>
+    <string name="capture_voice_fallback_title">Voice memo</string>
     <string name="capture_save_failed">Failed to save</string>
 </resources>

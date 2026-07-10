@@ -3,11 +3,13 @@ package com.just.feature.capture.capture
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.just.assistant.local.audio.AudioRecorder
 import com.just.assistant.local.image.ImageStore
 import com.just.assistant.repository.model.Note
 import com.just.assistant.repository.model.NoteType
 import com.just.assistant.repository.model.ScheduleEventInput
 import com.just.assistant.repository.model.ScheduleReminderInput
+import com.just.assistant.usecase.capture.di.ClassifyAudioCaptureUseCase
 import com.just.assistant.usecase.capture.di.ClassifyCaptureUseCase
 import com.just.assistant.usecase.capture.di.ClassifyImageCaptureUseCase
 import com.just.assistant.usecase.note.di.SaveNoteUseCase
@@ -15,6 +17,8 @@ import com.just.assistant.usecase.schedule.di.ScheduleEventUseCase
 import com.just.assistant.usecase.schedule.di.ScheduleReminderUseCase
 import com.just.feature.capture.CapturePreviewConfirmed
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,6 +42,8 @@ data class CaptureState(
     val preview: CapturePreview? = null,
     val isPreparing: Boolean = false,
     val isSaving: Boolean = false,
+    val isRecording: Boolean = false,
+    val recordingSeconds: Int = 0,
     val error: String? = null,
 )
 
@@ -51,9 +57,13 @@ class CaptureViewModel
         private val scheduleReminder: ScheduleReminderUseCase,
         private val classifyImage: ClassifyImageCaptureUseCase,
         private val imageStore: ImageStore,
+        private val classifyAudio: ClassifyAudioCaptureUseCase,
+        private val recorder: AudioRecorder,
     ) : ViewModel() {
         private val _state = MutableStateFlow(CaptureState())
         val state: StateFlow<CaptureState> get() = _state.asStateFlow()
+
+        private var recordingTicker: Job? = null
 
         fun onInputChanged(text: String) {
             _state.update { it.copy(input = text) }
@@ -117,6 +127,62 @@ class CaptureViewModel
                         }
                     } catch (t: Throwable) {
                         CapturePreview(title = fallbackTitle, body = "", type = NoteType.MEMO, imageUri = uri)
+                    }
+                _state.update { it.copy(preview = preview, isPreparing = false) }
+            }
+        }
+
+        /**
+         * 녹음 토글. RECORD_AUDIO 권한은 UI 레이어가 보장하고 호출.
+         * [fallbackTitle]은 분류 실패 시 프리뷰 제목 (stringResource 주입).
+         */
+        fun onToggleRecording(fallbackTitle: String) {
+            if (_state.value.isRecording) {
+                stopRecordingAndClassify(fallbackTitle)
+                return
+            }
+            if (_state.value.isPreparing) return
+            if (!recorder.start()) return
+            _state.update { it.copy(isRecording = true, recordingSeconds = 0) }
+            recordingTicker =
+                viewModelScope.launch {
+                    while (_state.value.isRecording) {
+                        delay(1_000)
+                        if (!_state.value.isRecording) break
+                        val elapsed = _state.value.recordingSeconds + 1
+                        _state.update { it.copy(recordingSeconds = elapsed) }
+                        if (elapsed >= AudioRecorder.MAX_DURATION_SECONDS) {
+                            stopRecordingAndClassify(fallbackTitle)
+                        }
+                    }
+                }
+        }
+
+        private fun stopRecordingAndClassify(fallbackTitle: String) {
+            val wav = recorder.stop()
+            recordingTicker?.cancel()
+            recordingTicker = null
+            _state.update { it.copy(isRecording = false, recordingSeconds = 0) }
+            if (wav == null) return
+            _state.update { it.copy(isPreparing = true) }
+            viewModelScope.launch {
+                val caption = _state.value.input.trim().ifEmpty { null }
+                val preview =
+                    try {
+                        val aiResult = classifyAudio(wav, caption)
+                        if (aiResult != null) {
+                            CapturePreview(
+                                title = aiResult.title,
+                                body = aiResult.body,
+                                type = aiResult.type,
+                                tags = aiResult.tags,
+                                datetime = aiResult.datetimeIso?.let { runCatching { Instant.parse(it) }.getOrNull() },
+                            )
+                        } else {
+                            CapturePreview(title = caption ?: fallbackTitle, body = "", type = NoteType.MEMO)
+                        }
+                    } catch (t: Throwable) {
+                        CapturePreview(title = caption ?: fallbackTitle, body = "", type = NoteType.MEMO)
                     }
                 _state.update { it.copy(preview = preview, isPreparing = false) }
             }

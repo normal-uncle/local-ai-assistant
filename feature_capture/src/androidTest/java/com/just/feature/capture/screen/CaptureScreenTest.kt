@@ -46,6 +46,17 @@ class CaptureScreenTest {
         override suspend fun toClassifierBytes(source: android.net.Uri): ByteArray = byteArrayOf(1)
     }
 
+    private class FakeClassifyAudio : com.just.assistant.usecase.capture.di.ClassifyAudioCaptureUseCase {
+        override suspend operator fun invoke(audioBytes: ByteArray, caption: String?): ClassificationResult? = null
+    }
+    private class FakeRecorder : com.just.assistant.local.audio.AudioRecorder {
+        override val isRecording: Boolean get() = false
+
+        override fun start(): Boolean = false
+
+        override fun stop(): ByteArray? = null
+    }
+
     @Test
     fun input_then_prepare_shows_preview_with_title_and_body() {
         compose.setContent {
@@ -53,7 +64,7 @@ class CaptureScreenTest {
                 onOpenMemo = {},
                 viewModel = CaptureViewModel(
                     FakeSaveNote(), FakeClassify(), FakeScheduleEvent(), FakeScheduleReminder(),
-                    FakeClassifyImage(), FakeImageStore(),
+                    FakeClassifyImage(), FakeImageStore(), FakeClassifyAudio(), FakeRecorder(),
                 ),
             )
         }

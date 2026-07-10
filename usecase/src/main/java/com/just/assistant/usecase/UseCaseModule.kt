@@ -5,7 +5,9 @@ import com.just.assistant.local.alarm.AlarmSnoozeAction
 import com.just.assistant.usecase.briefing.di.BuildDailyBriefingUseCase
 import com.just.assistant.usecase.briefing.impl.BuildDailyBriefingUseCaseImpl
 import com.just.assistant.usecase.capture.di.ClassifyCaptureUseCase
+import com.just.assistant.usecase.capture.di.ClassifyAudioCaptureUseCase
 import com.just.assistant.usecase.capture.di.ClassifyImageCaptureUseCase
+import com.just.assistant.usecase.capture.impl.ClassifyAudioCaptureUseCaseImpl
 import com.just.assistant.usecase.capture.impl.ClassifyCaptureUseCaseImpl
 import com.just.assistant.usecase.capture.impl.ClassifyImageCaptureUseCaseImpl
 import com.just.assistant.usecase.chat.di.RetrieveNoteContextUseCase
@@ -76,6 +78,9 @@ abstract class UseCaseModule {
 
     @Binds
     abstract fun bindClassifyImageCaptureUseCase(impl: ClassifyImageCaptureUseCaseImpl): ClassifyImageCaptureUseCase
+
+    @Binds
+    abstract fun bindClassifyAudioCaptureUseCase(impl: ClassifyAudioCaptureUseCaseImpl): ClassifyAudioCaptureUseCase
 
     @Binds
     abstract fun bindScheduleEventUseCase(impl: ScheduleEventUseCaseImpl): ScheduleEventUseCase

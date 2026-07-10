@@ -37,8 +37,9 @@
     <string name="capture_image_thumbnail_desc">선택한 이미지 미리보기</string>
     <string name="capture_image_fallback_title">사진 메모</string>
     <string name="capture_camera_denied_banner">카메라 권한이 없어 갤러리만 사용할 수 있습니다</string>
-    <string name="capture_voice_input">음성</string>
-    <string name="capture_voice_prompt">말씀하세요</string>
-    <string name="capture_voice_unavailable">음성 인식을 사용할 수 없습니다</string>
+    <string name="capture_record_start">음성 녹음</string>
+    <string name="capture_record_stop">중지 (%1$d초)</string>
+    <string name="capture_record_permission_denied">마이크 권한이 필요합니다</string>
+    <string name="capture_voice_fallback_title">음성 메모</string>
     <string name="capture_save_failed">저장 실패</string>
 </resources>
